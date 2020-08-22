@@ -10,11 +10,14 @@ type PropsType = {
 
 const RadioList = (props: PropsType) => {
   return (
-    <ul className={styles.list}>
-      {props.radios.map((radio) => (
-        <RadioItem key={radio.radio_id} radio={radio} />
-      ))}
-    </ul>
+    <>
+      <h2 className={styles.title}>Radios</h2>
+      <ul className={styles.list}>
+        {props.radios.map((radio) => (
+          <RadioItem key={radio.radio_id} radio={radio} />
+        ))}
+      </ul>
+    </>
   );
 };
 
