@@ -5,9 +5,9 @@ export type ResponseType = {
 
 export type RadioType = {
   city: string;
-  logo_ur: string;
+  logo_url: string;
   name: string;
-  radio_id: 235;
+  radio_id: number;
   detections: DetectionsType[];
   state: string;
   streaming_url: string;
@@ -31,9 +31,9 @@ const HOST = "http://localhost:5001/radiopp-acbbe/us-central1";
 const ENDPOINT = "radios";
 const URL = `${HOST}/${ENDPOINT}`;
 
-class RadioAPI {
-  public radios: RadioType[] = [];
-  public now: Date | null = null;
+class API {
+  private radios: RadioType[] = [];
+  private now: Date | null = null;
 
   constructor() {
     this.getRadios();
@@ -53,4 +53,4 @@ class RadioAPI {
   }
 }
 
-export const Radio = new RadioAPI();
+export const RadioAPI = new API();
