@@ -1,4 +1,6 @@
-export type ResponseType = {
+import { responseMock } from "./mock";
+
+export type RadioResponseType = {
   info: RadioType[];
   now: string;
 };
@@ -8,23 +10,23 @@ export type RadioType = {
   logo_url: string;
   name: string;
   radio_id: number;
-  detections: DetectionsType[];
+  detections: DetectionsType[] | null;
   state: string;
   streaming_url: string;
 };
 
 export type DetectionsType = {
   detected_at: string;
-  dns: string;
-  id: number;
-  id_musica: number;
-  img: string;
+  dns: string | null;
+  id: number | null;
+  id_musica: number | null;
+  img: string | null;
   track_artist: string;
   track_duration: number;
   track_id: number;
   track_title: string;
-  url: string;
-  video_yt: string;
+  url: string | null;
+  video_yt: string | null;
 };
 
 const HOST = "http://localhost:5001/radiopp-acbbe/us-central1";
@@ -40,16 +42,18 @@ class API {
   }
 
   public async getRadios() {
-    if (this.radios.length > 0) {
-      return this.radios;
-    }
+    return responseMock.info;
 
-    const res: ResponseType = await (await fetch(URL)).json();
+    // if (this.radios.length > 0) {
+    //   return this.radios;
+    // }
 
-    this.radios = res.info;
-    this.now = new Date(res.now);
+    // const res: RadioResponseType = await (await fetch(URL)).json();
 
-    return this.radios;
+    // this.radios = res.info;
+    // this.now = new Date(res.now);
+
+    // return this.radios;
   }
 }
 
