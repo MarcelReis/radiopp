@@ -5,12 +5,13 @@ import styles from "./RadioItem.module.css";
 
 type PropsType = {
   radio: RadioType;
+  onClick: (radio: RadioType) => void;
 };
 
-const RadioItem = ({ radio }: PropsType) => {
+const RadioItem = ({ radio, onClick }: PropsType) => {
   return (
     <li className={styles.item}>
-      <a className={styles.link} href="/">
+      <span className={styles.link} onClick={() => onClick(radio)}>
         <img
           className={styles.logo}
           width={50}
@@ -26,7 +27,7 @@ const RadioItem = ({ radio }: PropsType) => {
         <span className={styles.detections}>
           {radio.detections?.map((detect) => detect.track_artist).join(", ")}
         </span>
-      </a>
+      </span>
     </li>
   );
 };

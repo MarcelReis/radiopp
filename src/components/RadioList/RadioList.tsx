@@ -6,6 +6,7 @@ import RadioItem from "../RadioItem";
 
 type PropsType = {
   radios: RadioType[];
+  selectRadio: (radio: RadioType) => void;
 };
 
 const RadioList = (props: PropsType) => {
@@ -14,7 +15,11 @@ const RadioList = (props: PropsType) => {
       <h2 className={styles.title}>Radios</h2>
       <ul className={styles.list}>
         {props.radios.map((radio) => (
-          <RadioItem key={radio.radio_id} radio={radio} />
+          <RadioItem
+            key={radio.radio_id}
+            radio={radio}
+            onClick={props.selectRadio}
+          />
         ))}
       </ul>
     </>
