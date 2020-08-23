@@ -7,6 +7,7 @@ import { GiRadarSweep } from "react-icons/gi";
 import styles from "./Player.module.css";
 
 type PropsType = {
+  hide: boolean;
   playing: boolean;
   loading: boolean;
   radio: RadioType | null;
@@ -21,18 +22,18 @@ const Player = (props: PropsType) => {
     .join(" - ");
 
   return (
-    <div className={props.playing ? styles.container : styles.containerHidden}>
+    <div className={props.hide ? styles.containerHidden : styles.container}>
       <div className={styles.wrapper}>
         {props.loading ? (
           <button className={styles.spinnerButton}>
             <GiRadarSweep />
           </button>
         ) : !props.playing ? (
-          <button className={styles.playButton}>
+          <button className={styles.playButton} onClick={props.play}>
             <MdPlayArrow />
           </button>
         ) : (
-          <button className={styles.playButton}>
+          <button className={styles.playButton} onClick={props.pause}>
             <MdPause />
           </button>
         )}
