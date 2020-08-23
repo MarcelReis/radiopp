@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import RadioContainer from "./container/RadioContainer";
+import "../node_modules/materialize-css/dist/js/materialize";
 
 import "normalize.css";
-import PlayerContainer from "./container/PlayerContainer";
+import "./styles/main.css";
+
 import { RadioType } from "./api/radios";
+
+import RadioContainer from "./container/RadioContainer";
+import PlayerContainer from "./container/PlayerContainer";
 
 import AppBar from "./components/AppBar";
 
