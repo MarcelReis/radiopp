@@ -10,11 +10,15 @@ type PropsType = {
 
 const PlayerContainer = (props: PropsType) => {
   const [player, setPlayer] = useState<null | Howl>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const radioURL = props.radio?.streaming_url;
   useEffect(() => {
+    setLoading(true);
+
     setPlayer((player) => {
       if (player) {
+        player.stop();
         player.unload();
       }
 
@@ -26,6 +30,15 @@ const PlayerContainer = (props: PropsType) => {
         src: [radioURL],
         html5: true,
         format: ["acc", "mp3"],
+      });
+
+      newPlayer.once("load", () => {
+        setLoading(false);
+      });
+
+      newPlayer.once("loaderror", () => {
+        setLoading(false);
+        alert("Erro ao carregar a radio");
       });
 
       newPlayer.play();
@@ -50,6 +63,7 @@ const PlayerContainer = (props: PropsType) => {
   return (
     <Player
       playing={player !== null}
+      loading={loading}
       radio={props.radio}
       play={play}
       pause={pause}

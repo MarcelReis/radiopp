@@ -6,12 +6,25 @@
   height: 72px;
   background: #212121;
   color: #fff;
+  transition: transform 1s ease;
+}
+.containerHidden {
+  composes: container;
+  transform: translateY(100%);
 }
 
 .container .is-hidden {
   transform: translateY(100%);
 }
 
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 .button {
   width: 56px;
   height: 56px;
@@ -30,6 +43,16 @@
 .playButton {
   composes: button;
   margin-right: 16px;
+}
+.spinnerButton {
+  composes: button;
+  margin-right: 16px;
+}
+.spinnerButton svg {
+  animation-name: rotate;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 2s;
 }
 
 .wrapper {

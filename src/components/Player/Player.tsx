@@ -2,11 +2,13 @@ import React from "react";
 import { RadioType } from "../../api/radios";
 
 import { MdPlayArrow, MdPause, MdPlaylistPlay } from "react-icons/md";
+import { GiRadarSweep } from "react-icons/gi";
 
 import styles from "./Player.module.css";
 
 type PropsType = {
   playing: boolean;
+  loading: boolean;
   radio: RadioType | null;
 
   play: () => void;
@@ -19,9 +21,13 @@ const Player = (props: PropsType) => {
     .join(" - ");
 
   return (
-    <div className={styles.container}>
+    <div className={props.playing ? styles.container : styles.containerHidden}>
       <div className={styles.wrapper}>
-        {!props.playing ? (
+        {props.loading ? (
+          <button className={styles.spinnerButton}>
+            <GiRadarSweep />
+          </button>
+        ) : !props.playing ? (
           <button className={styles.playButton}>
             <MdPlayArrow />
           </button>
