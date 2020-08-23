@@ -1,3 +1,3 @@
 deploy:
 	yarn build
-	firebase deploy --only functions
+	firebase deploy --only hosting
