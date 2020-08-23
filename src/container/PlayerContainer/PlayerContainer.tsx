@@ -9,21 +9,21 @@ type PropsType = {
 };
 
 const PlayerContainer = (props: PropsType) => {
-  const [player, setPlayer] = useState<null | Howl>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [state, setState] = useState<{ player: null | Howl; loading: boolean }>(
+    { player: null, loading: false }
+  );
 
   const radioURL = props.radio?.streaming_url;
   useEffect(() => {
-    setLoading(true);
-
-    setPlayer((player) => {
-      if (player) {
-        player.stop();
-        player.unload();
+    setState((state) => {
+      if (state.loading) {
+        return { ...state };
       }
-
+      if (state.player) {
+        state.player.unload();
+      }
       if (!radioURL) {
-        return null;
+        return { ...state, player: null };
       }
 
       const newPlayer = new Howl({
@@ -33,37 +33,39 @@ const PlayerContainer = (props: PropsType) => {
       });
 
       newPlayer.once("load", () => {
-        setLoading(false);
+        setState((state) => ({ ...state, loading: false }));
       });
 
       newPlayer.once("loaderror", () => {
-        setLoading(false);
+        setState((state) => ({ ...state, loading: false }));
         alert("Erro ao carregar a radio");
       });
 
       newPlayer.play();
 
-      return newPlayer;
+      return { ...state, player: newPlayer };
     });
   }, [radioURL]);
 
   useEffect(() => {
     return () => {
-      player?.unload();
+      state.player?.unload();
     };
-  }, [player]);
+  }, [state.player]);
 
   const play = () => {
-    player?.play();
+    console.log("play");
+    state.player?.play();
   };
   const pause = () => {
-    player?.pause();
+    console.log("pause");
+    state.player?.pause();
   };
 
   return (
     <Player
-      playing={player !== null}
-      loading={loading}
+      playing={state.player !== null}
+      loading={state.loading}
       radio={props.radio}
       play={play}
       pause={pause}
