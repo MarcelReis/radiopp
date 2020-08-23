@@ -29,9 +29,9 @@ export type DetectionsType = {
   video_yt: string | null;
 };
 
-const HOST = "http://localhost:5001/radiopp-acbbe/us-central1";
-const ENDPOINT = "radios";
-const URL = `${HOST}/${ENDPOINT}`;
+// const HOST = "http://localhost:5001/radiopp-acbbe/us-central1";
+// const ENDPOINT = "radios";
+// const URL = `${HOST}/${ENDPOINT}`;
 
 class API {
   private radios: RadioType[] = [];
