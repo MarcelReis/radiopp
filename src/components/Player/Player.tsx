@@ -53,10 +53,15 @@ const Player = (props: PropsType) => {
         </div>
 
         <div className={styles.detection}>
-          <span>Identificando...</span>
+          <span onClick={() => alert("Em desenvolvimento")}>
+            Identificando...
+          </span>
         </div>
 
-        <button className={styles.playlistButton}>
+        <button
+          className={styles.playlistButton}
+          onClick={() => alert("Em desenvolvimento")}
+        >
           <MdPlaylistPlay />
         </button>
       </div>
