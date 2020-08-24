@@ -10,7 +10,11 @@
 
 # production
 /build
+/out
+
+#cache
 /.firebase
+/.next
 
 # misc
 .DS_Store

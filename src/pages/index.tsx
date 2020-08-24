@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-import "../node_modules/materialize-css/dist/js/materialize";
 
-import "normalize.css";
-import "./styles/main.css";
+import { RadioType } from "../api/radios";
 
-import { RadioType } from "./api/radios";
+import RadioContainer from "../container/RadioContainer";
+import PlayerContainer from "../container/PlayerContainer";
 
-import RadioContainer from "./container/RadioContainer";
-import PlayerContainer from "./container/PlayerContainer";
+import AppBar from "../components/AppBar";
 
-import AppBar from "./components/AppBar";
-
-function App() {
+export default function HomePage() {
   const [radio, setRadio] = useState<null | RadioType>(null);
 
   return (
@@ -24,5 +20,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
