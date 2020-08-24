@@ -3,17 +3,13 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 72px;
+  height: 50px;
   background: #212121;
   color: #fff;
   transition: transform 1s ease;
 }
 .containerHidden {
   composes: container;
-  transform: translateY(100%);
-}
-
-.container .is-hidden {
   transform: translateY(100%);
 }
 
@@ -25,34 +21,23 @@
     transform: rotate(360deg);
   }
 }
-.button {
-  width: 56px;
-  height: 56px;
-  border: 0;
-  font-size: 2.5rem;
-  padding: 8px;
-  background: transparent;
-  color: #fff;
-  border-radius: 8px;
-  outline: tomato;
-}
-.button:hover {
-  background: #2e2e2e;
-}
 
 .playButton {
-  composes: button;
-  margin-right: 16px;
+  composes: iconButtonMd from "../../styles/button.css";
+  margin-right: 8px;
 }
 .spinnerButton {
-  composes: button;
-  margin-right: 16px;
+  composes: iconButtonMd from "../../styles/button.css";
+  margin-right: 8px;
 }
 .spinnerButton svg {
   animation-name: rotate;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-duration: 2s;
+}
+.playlistButton {
+  composes: iconButtonMd from "../../styles/button.css";
 }
 
 .wrapper {
@@ -61,12 +46,11 @@
   height: 100%;
   max-width: 800px;
   margin: auto;
-  padding: 8px;
 }
 
 .radioData {
   display: flex;
-  margin: 8px 16px 8px 0;
+  margin: 8px 8px 8px 0;
 }
 
 .radioInfo {
@@ -76,13 +60,24 @@
 }
 
 .radioName {
-  font-weight: bold;
+  word-wrap: none;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.radioLocation {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
 }
 
 .radioThumb {
   background: #777;
   border-radius: 8px;
-  margin-right: 16px;
+  margin-right: 12px;
 }
 
 .detection {

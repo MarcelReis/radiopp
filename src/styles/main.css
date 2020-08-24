@@ -25,3 +25,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+:root {
+  --primary-dark: #303f9f;
+  --primary: #3f51b5;
+  --primary-light: #c5cae9;
+
+  --accent: #448aff;
+  --icons: #fff;
+  --primary-text: #212121;
+  --secondary-text: #757575;
+  --terciary_text: #bdbdbd;
+
+  --base-color: #fff;
+
+  --max-width: 800px;
+}

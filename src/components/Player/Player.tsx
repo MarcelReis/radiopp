@@ -42,13 +42,13 @@ const Player = (props: PropsType) => {
           <img
             className={styles.radioThumb}
             src={props.radio?.logo_url}
-            width={40}
-            height={40}
+            width={36}
+            height={36}
             alt=""
           />
           <div className={styles.radioInfo}>
             <span className={styles.radioName}>{props.radio?.name}</span>
-            <span>{location}</span>
+            <span className={styles.radioLocation}>{location}</span>
           </div>
         </div>
 
@@ -56,7 +56,7 @@ const Player = (props: PropsType) => {
           <span>Identificando...</span>
         </div>
 
-        <button className={styles.button}>
+        <button className={styles.playlistButton}>
           <MdPlaylistPlay />
         </button>
       </div>
