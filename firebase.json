@@ -4,11 +4,12 @@
     "source": "functions"
   },
   "hosting": {
-    "public": "out",
+    "public": ".app/out",
+    "cleanUrls": true,
     "rewrites": [
       {
         "source": "**",
-        "destination": "/index.html"
+        "function": "404.html"
       }
     ]
   }
