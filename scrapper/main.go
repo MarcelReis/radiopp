@@ -3,9 +3,28 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/gocolly/colly"
 )
+
+// Radio ...
+type Radio struct {
+	name        string
+	thumb       string
+	city        string
+	state       string
+	country     string
+	site        string
+	originalURL string
+	streamURL   []string
+	genres      []string
+}
+
+// Context ...
+type Context struct {
+	radio Radio
+}
 
 func main() {
 	c := colly.NewCollector(
@@ -14,30 +33,53 @@ func main() {
 		colly.IgnoreRobotsTxt(),
 		colly.URLFilters(regexp.MustCompile(".*aovivo.*"), regexp.MustCompile(".*belo-horizonte.*")))
 
-	re := regexp.MustCompile("'url':'.*'")
+	reRadioStreamURL := regexp.MustCompile("'url':'.*'")
 
 	c.OnHTML("script", func(e *colly.HTMLElement) {
-		match := re.FindString(e.Text)
+		streamURL := reRadioStreamURL.FindString(e.Text)
 
-		if match != "" {
-			fmt.Println("Found", match)
+		if streamURL != "" {
+			streamURL = streamURL[7 : len(streamURL)-1]
+			e.Request.Ctx.Put("streamURL", streamURL)
 		}
 	})
 
-	c.OnHTML("h1", func(e *colly.HTMLElement) {
-		fmt.Println("Title", e.Text)
+	c.OnHTML(".header-radio > h1", func(e *colly.HTMLElement) {
+		name := e.Text
+		e.Request.Ctx.Put("name", name)
 	})
 
-	c.OnHTML("h2", func(e *colly.HTMLElement) {
-		fmt.Println("SubTitle", e.Text)
+	c.OnHTML(".conteudo .info-radio", func(e *colly.HTMLElement) {
+		e.ForEach("p", func(i int, e *colly.HTMLElement) {
+			info := e.Text
+
+			switch true {
+			case strings.HasPrefix(info, "Cidade:"):
+				e.Request.Ctx.Put("city", info)
+
+			case strings.HasPrefix(info, "Estado:"):
+				e.Request.Ctx.Put("state", info)
+
+			case strings.HasPrefix(info, "Pa"):
+				e.Request.Ctx.Put("country", info)
+
+			case strings.HasPrefix(info, "Site:"):
+				e.Request.Ctx.Put("site", info)
+			}
+		})
 	})
 
 	// Find and visit all links
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		e.Request.Visit(e.Attr("href"))
+	c.OnHTML(".pagination-body a[href], .resultados-items a[href]", func(e *colly.HTMLElement) {
+		url := e.Request.URL.EscapedPath()
+		if strings.Contains(url, "belo-horizonte") {
+			e.Request.Visit(e.Attr("href"))
+		}
 	})
 
-	c.OnRequest(func(r *colly.Request) {
+	c.OnScraped(func(r *colly.Response) {
+		fmt.Println(r.Ctx.Get("name"))
+		fmt.Println(r.Ctx.Get("streamURL"))
 	})
 
 	c.Visit("https://www.radios.com.br/radio/cidade/belo-horizonte/8594")
