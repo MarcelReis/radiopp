@@ -1,26 +1,32 @@
 {
   "name": "functions",
   "scripts": {
-    "build": "tsc ./src/index.ts",
-    "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "watch": "yarn build --watch",
+    "build": "babel 'src' --out-dir 'src' --source-maps --extensions '.ts'",
+    "serve": "yarn watch MODE='development' & yarn firebase emulators:start --only functions",
+    "shell": "yarn watch && firebase functions:shell",
+    "deploy": "yarn build && firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {
     "node": "12"
   },
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "dependencies": {
+    "@babel/preset-typescript": "^7.10.4",
+    "apollo-server": "^2.16.1",
+    "apollo-server-cloud-functions": "^2.16.1",
     "cors": "^2.8.5",
-    "firebase-admin": "^8.10.0",
+    "firebase-admin": "^9.1.1",
     "firebase-functions": "^3.6.1",
-    "node-fetch": "^2.6.0"
+    "graphql": "^15.3.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.4",
+    "@babel/preset-env": "^7.11.0",
     "firebase-functions-test": "^0.2.0",
+    "firebase-tools": "^8.9.2",
     "typescript": "^3.8.0"
   },
   "private": true
