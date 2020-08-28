@@ -1,22 +1,23 @@
 import React from "react";
-import { RadioType } from "../../api/radios";
+
+import { Radio } from "src/types/graphql";
 
 import styles from "./RadioList.module.css";
 import RadioItem from "../RadioItem";
 
 type PropsType = {
-  radios: RadioType[];
-  selectRadio: (radio: RadioType) => void;
+  radios: Radio[];
+  selectRadio: (radio: Radio) => void;
 };
 
-const RadioList = (props: PropsType) => {
+const RadioList = (props: PropsType): JSX.Element => {
   return (
     <>
       <h2 className={styles.title}>Radios</h2>
       <ul className={styles.list}>
         {props.radios.map((radio) => (
           <RadioItem
-            key={radio.radio_id}
+            key={radio.name + radio.website}
             radio={radio}
             onClick={props.selectRadio}
           />

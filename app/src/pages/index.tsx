@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 
-import { RadioType } from "../api/radios";
-
 import RadioContainer from "../container/RadioContainer";
 import PlayerContainer from "../container/PlayerContainer";
 
 import AppBar from "../components/AppBar";
+import { Radio } from "src/types/graphql";
 
-export default function HomePage() {
-  const [radio, setRadio] = useState<null | RadioType>(null);
+export default function HomePage(): JSX.Element {
+  const [radio, setRadio] = useState<null | Radio>(null);
 
   return (
     <div className="App">

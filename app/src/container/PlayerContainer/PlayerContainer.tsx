@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
 
+import { Radio } from "src/types/graphql";
+
 import { Howl } from "howler";
-import { RadioType } from "../../api/radios";
 import Player from "../../components/Player";
 
 type PropsType = {
-  radio: RadioType | null;
+  radio: Radio | null;
 };
 type StateType = {
   player: null | Howl;
   loading: boolean;
   playing: boolean;
 };
-const PlayerContainer = (props: PropsType) => {
+const PlayerContainer = (props: PropsType): JSX.Element => {
   const [state, setState] = useState<StateType>({
     player: null,
     loading: false,
     playing: false,
   });
 
-  const radioURL = props.radio?.streaming_url;
+  const radioURL = props.radio?.streamURL;
   useEffect(() => {
     setState((state) => {
       if (state.loading) {

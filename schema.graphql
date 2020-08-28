@@ -1,5 +1,7 @@
 type Radio {
+  id: Int
   name: String!
+  originalURL: String!
   thumb: String!
   website: String!
   streamURL: String!
@@ -9,5 +11,5 @@ type Radio {
 }
 
 type Query {
-  radios: [Radio]
+  radios: [Radio!]!
 }

@@ -1,28 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { gql, useQuery } from "@apollo/client";
 
-import { RadioAPI, RadioType } from "../../api/radios";
+import { Query, Radio } from "src/types/graphql";
+
 import RadioList from "../../components/RadioList";
 
+const GET_RADIO = gql`
+  query GetRadio {
+    radios {
+      name
+      thumb
+      city
+      state
+      streamURL
+      website
+    }
+  }
+`;
+
 type PropsType = {
-  setRadio: (radio: RadioType) => void;
+  setRadio: (radio: Radio) => void;
 };
 
-const RadioContainer = (props: PropsType) => {
-  const [radios, setRadios] = useState<RadioType[]>([]);
+const RadioContainer = (props: PropsType): JSX.Element => {
+  const { data, loading, error } = useQuery<Query>(GET_RADIO);
 
-  useEffect(() => {
-    RadioAPI.getRadios().then(setRadios);
-  }, []);
-
-  if (radios.length === 0) {
+  if (loading || error) {
     return null;
   }
 
-  return <RadioList radios={radios} selectRadio={props.setRadio} />;
-};
+  const onlineRadios = data.radios.filter((radio) => radio.streamURL !== "");
 
-type RadioItemPropsType = {
-  radio: RadioType;
+  return <RadioList radios={onlineRadios} selectRadio={props.setRadio} />;
 };
 
 export default RadioContainer;

@@ -1,14 +1,14 @@
 import React from "react";
-import { RadioType } from "../../api/radios";
+import { Radio } from "src/types/graphql";
 
 import styles from "./RadioItem.module.css";
 
 type PropsType = {
-  radio: RadioType;
-  onClick: (radio: RadioType) => void;
+  radio: Radio;
+  onClick: (radio: Radio) => void;
 };
 
-const RadioItem = ({ radio, onClick }: PropsType) => {
+const RadioItem = ({ radio, onClick }: PropsType): JSX.Element => {
   return (
     <li className={styles.item}>
       <span className={styles.link} onClick={() => onClick(radio)}>
@@ -16,7 +16,7 @@ const RadioItem = ({ radio, onClick }: PropsType) => {
           className={styles.logo}
           width={50}
           height={50}
-          src={radio.logo_url}
+          src={radio.thumb}
           alt=""
         />
         <span className={styles.title}>{radio.name}</span>
@@ -24,9 +24,9 @@ const RadioItem = ({ radio, onClick }: PropsType) => {
           {radio.city}, {radio.state}
         </span>
 
-        <span className={styles.detections}>
+        {/* <span className={styles.detections}>
           {radio.detections?.map((detect) => detect.track_artist).join(", ")}
-        </span>
+        </span> */}
       </span>
     </li>
   );

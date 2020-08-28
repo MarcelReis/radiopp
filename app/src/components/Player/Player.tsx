@@ -5,18 +5,19 @@ import { MdPlayArrow, MdPause, MdPlaylistPlay } from "react-icons/md";
 import { GiRadarSweep } from "react-icons/gi";
 
 import styles from "./Player.module.css";
+import { Radio } from "src/types/graphql";
 
 type PropsType = {
   hide: boolean;
   playing: boolean;
   loading: boolean;
-  radio: RadioType | null;
+  radio: Radio | null;
 
   play: () => void;
   pause: () => void;
 };
 
-const Player = (props: PropsType) => {
+const Player = (props: PropsType): JSX.Element => {
   const location: string = [props.radio?.city, props.radio?.state]
     .filter((l) => !!l)
     .join(" - ");
@@ -41,7 +42,7 @@ const Player = (props: PropsType) => {
         <div className={styles.radioData}>
           <img
             className={styles.radioThumb}
-            src={props.radio?.logo_url}
+            src={props.radio?.thumb}
             width={36}
             height={36}
             alt=""
