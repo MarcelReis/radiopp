@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 	"regexp"
 	"strings"
 
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	os.Setenv("FIRESTORE_EMULATOR_HOST", "localhost:8080")
+
 	ctx := context.Background()
 	sa := option.WithCredentialsFile("./firebase-config.json")
 	app, err := firebase.NewApp(ctx, nil, sa)
@@ -30,6 +33,15 @@ func main() {
 		colly.CacheDir("./cache"),
 		colly.IgnoreRobotsTxt(),
 		colly.URLFilters(regexp.MustCompile(".*aovivo.*"), regexp.MustCompile(".*belo-horizonte.*")))
+
+	c.OnRequest(func(r *colly.Request) {
+		r.Ctx.Put("name", "")
+		r.Ctx.Put("website", "")
+		r.Ctx.Put("thumb", "")
+		r.Ctx.Put("city", "")
+		r.Ctx.Put("state", "")
+		r.Ctx.Put("streamURL", "")
+	})
 
 	reRadioStreamURL := regexp.MustCompile("'url':'.*'")
 
