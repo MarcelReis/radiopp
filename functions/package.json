@@ -9,7 +9,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "12"
+    "node": "8"
   },
   "main": "dist/index.js",
   "dependencies": {
@@ -17,9 +17,9 @@
     "apollo-server": "^2.16.1",
     "apollo-server-cloud-functions": "^2.16.1",
     "cors": "^2.8.5",
-    "firebase-admin": "^9.1.1",
+    "firebase-admin": "^8.13.0",
     "firebase-functions": "^3.6.1",
-    "graphql": "^15.3.0"
+    "graphql": "^14.7.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",

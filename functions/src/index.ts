@@ -47,8 +47,10 @@ const resolvers = {
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  playground: process.env.MODE !== "development",
-  introspection: process.env.MODE !== "development",
+  playground: process.env.MODE == "development",
+  introspection: process.env.MODE == "development",
 });
 
-export const graphql = functions.https.onRequest(apolloServer.createHandler());
+const apolloHandler = apolloServer.createHandler({ cors: { origin: true } });
+
+export const graphql = functions.https.onRequest(apolloHandler);
