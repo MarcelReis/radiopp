@@ -2,8 +2,8 @@
   "name": "functions",
   "scripts": {
     "watch": "yarn build --watch",
-    "build": "babel 'src' --out-dir 'src' --source-maps --extensions '.ts'",
-    "serve": "yarn watch MODE='development' & yarn firebase emulators:start --only functions",
+    "build": "babel 'src' --out-dir 'dist' --source-maps --extensions '.ts'",
+    "serve": "yarn watch& yarn firebase emulators:start --only functions",
     "shell": "yarn watch && firebase functions:shell",
     "deploy": "yarn build && firebase deploy --only functions",
     "logs": "firebase functions:log"
