@@ -1,6 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
-
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
@@ -9,11 +6,21 @@ import { ApolloServer, gql } from "apollo-server-cloud-functions";
 admin.initializeApp();
 const db = admin.firestore();
 
-const schema = fs
-  .readFileSync(path.join(__dirname, "../../schema.graphql"), "utf8")
-  .toString();
+const typeDefs = gql`
+  type Radio {
+    name: String!
+    thumb: String!
+    website: String!
+    streamURL: String!
+    city: String!
+    state: String!
+    country: String!
+  }
 
-const typeDefs = gql(schema);
+  type Query {
+    radios: [Radio]
+  }
+`;
 
 const resolvers = {
   Query: {

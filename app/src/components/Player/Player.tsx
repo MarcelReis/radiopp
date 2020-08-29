@@ -1,5 +1,4 @@
 import React from "react";
-import { RadioType } from "../../api/radios";
 
 import { MdPlayArrow, MdPause, MdPlaylistPlay } from "react-icons/md";
 import { GiRadarSweep } from "react-icons/gi";
