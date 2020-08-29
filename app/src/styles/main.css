@@ -12,13 +12,11 @@ a {
 html,
 body {
   width: 100%;
-}
-
-html {
   height: 100%;
 }
 
-body {
+#__next {
+  position: relative;
   min-height: 100%;
 }
 
@@ -38,10 +36,18 @@ code {
     monospace;
 }
 
+hr {
+  margin: var(--spacing-0) 0;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+
 :root {
   --primary-dark: #303f9f;
   --primary: #3f51b5;
   --primary-light: #c5cae9;
+
+  --z-appbar: 100;
 
   --spacing-0: 4px;
   --spacing-1: 8px;
@@ -55,9 +61,10 @@ code {
   --icons: #fff;
   --primary-text: #212121;
   --secondary-text: #757575;
-  --terciary_text: #bdbdbd;
+  --terciary-text: #bdbdbd;
 
   --base-color: #fff;
 
+  --appbar-height: 50px;
   --max-width: 800px;
 }

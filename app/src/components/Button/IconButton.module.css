@@ -1,0 +1,25 @@
+.button {
+  cursor: pointer;
+  border: 0;
+  font-size: 2.5rem;
+  background: transparent;
+  color: inherit;
+  outline: none;
+}
+
+.md {
+  composes: button;
+  width: 48px;
+  height: 48px;
+  font-size: 2rem;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.lg {
+  composes: button;
+  width: 56px;
+  height: 56px;
+  font-size: 2.5rem;
+  padding: 8px;
+}

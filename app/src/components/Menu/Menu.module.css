@@ -1,0 +1,36 @@
+.container {
+  position: fixed;
+  top: var(--appbar-height);
+  left: 0px;
+  z-index: 10;
+  height: calc(100% - var(--appbar-height));
+  width: 80%;
+  max-width: 300px;
+
+  transition: 0.2s transform ease;
+  transform: translateX(0);
+
+  background: #fff;
+}
+
+.containerHidden {
+  composes: container;
+  transform: translateX(-100%);
+}
+
+.menuList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menuListItem {
+  display: flex;
+  height: 48px;
+}
+
+.menuListText {
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-3) var(--spacing-3) var(--spacing-3) var(--spacing-6);
+}

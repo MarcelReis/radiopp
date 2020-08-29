@@ -1,20 +1,24 @@
 import React from "react";
 import Link from "next/link";
 
-import { MdMenu, MdSearch } from "react-icons/md";
+import { MdSearch, MdMenu } from "react-icons/md";
 
 import styles from "./AppBar.module.css";
+import IconButton from "../Button/IconButton";
 
-const AppBar = (): JSX.Element => {
+type PropsType = {
+  toggleMenu: () => void;
+  menuOpen: boolean;
+};
+
+const AppBar = (props: PropsType): JSX.Element => {
   return (
     <header className={styles.container}>
       <div className={styles.wrapper}>
-        <button
-          className={styles.menuButton}
-          onClick={() => alert("Em desenvolvimento")}
-        >
+        <IconButton onClick={props.toggleMenu}>
           <MdMenu />
-        </button>
+        </IconButton>
+
         <h1 className={styles.title}>
           <Link href="/">
             <a>Radiopp</a>
