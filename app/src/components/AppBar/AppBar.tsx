@@ -1,10 +1,11 @@
 import React from "react";
+import Link from "next/link";
 
 import { MdMenu, MdSearch } from "react-icons/md";
 
 import styles from "./AppBar.module.css";
 
-const AppBar = () => {
+const AppBar = (): JSX.Element => {
   return (
     <header className={styles.container}>
       <div className={styles.wrapper}>
@@ -14,7 +15,11 @@ const AppBar = () => {
         >
           <MdMenu />
         </button>
-        <h1 className={styles.title}>Radiopp</h1>
+        <h1 className={styles.title}>
+          <Link href="/">
+            <a>Radiopp</a>
+          </Link>
+        </h1>
         <button
           className={styles.searchButton}
           onClick={() => alert("Em desenvolvimento")}

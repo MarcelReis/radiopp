@@ -3,7 +3,6 @@ import React from "react";
 import { Radio } from "src/types/graphql";
 
 import styles from "./RadioList.module.css";
-import RadioItem from "../RadioItem";
 
 type PropsType = {
   radios: Radio[];
@@ -16,11 +15,24 @@ const RadioList = (props: PropsType): JSX.Element => {
       <h2 className={styles.title}>Radios</h2>
       <ul className={styles.list}>
         {props.radios.map((radio) => (
-          <RadioItem
-            key={radio.name + radio.website}
-            radio={radio}
-            onClick={props.selectRadio}
-          />
+          <li className={styles.item} key={radio.originalURL}>
+            <span
+              className={styles.link}
+              onClick={() => props.selectRadio(radio)}
+            >
+              <img
+                className={styles.logo}
+                width={50}
+                height={50}
+                src={radio.thumb}
+                alt=""
+              />
+              <span className={styles.title}>{radio.name.replace("Rdio", "Rádio")}</span>
+              <span className={styles.location}>
+                {radio.city}, {radio.state}
+              </span>
+            </span>
+          </li>
         ))}
       </ul>
     </>

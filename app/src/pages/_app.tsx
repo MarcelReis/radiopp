@@ -5,6 +5,7 @@ import { AppPropsType } from "next/dist/next-server/lib/utils";
 
 import "../styles/main.css";
 import Footer from "src/components/Footer";
+import AppBar from "src/components/AppBar";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function MyApp({ Component, pageProps }: AppPropsType) {
@@ -13,6 +14,7 @@ function MyApp({ Component, pageProps }: AppPropsType) {
   return (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <ApolloProvider client={apolloClient as any}>
+      <AppBar />
       <Component {...pageProps} />
       <Footer />
     </ApolloProvider>
