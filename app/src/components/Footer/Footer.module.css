@@ -1,0 +1,10 @@
+.container {
+  width: 100%;
+  background-color: var(--primary);
+  padding: 8px;
+}
+
+.copyRight {
+  text-align: center;
+  color: #fff;
+}
