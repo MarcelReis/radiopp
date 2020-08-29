@@ -12,6 +12,7 @@ const MenuContainer = dynamic(() => import("../container/MenuContainer"), {
 
 import Footer from "src/components/Footer";
 import AppBar from "src/components/AppBar";
+import Head from "next/head";
 
 function MyApp({ Component, pageProps }: AppPropsType): JSX.Element {
   const [state, setState] = useState({ menuOpen: false });
@@ -22,6 +23,13 @@ function MyApp({ Component, pageProps }: AppPropsType): JSX.Element {
 
   return (
     <>
+      <Head>
+        <title>Radiopp - As melhores Rádios online</title>
+        <meta
+          name="description"
+          content="As melhores rádios do Brasil, escute as rádios da sua cidade e do mundo online"
+        />
+      </Head>
       <ApolloProvider client={apolloClient as any}>
         <AppBar toggleMenu={toggleMenu} menuOpen={state.menuOpen} />
         <Component {...pageProps} />
