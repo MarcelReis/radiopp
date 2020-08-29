@@ -1,30 +1,32 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { useMemo } from "react";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from "@apollo/client";
 
-let apolloClient;
+import { HttpLink } from "@apollo/client/link/http";
+
+let apolloClient: ApolloClient<NormalizedCacheObject>;
 
 function createIsomorphLink() {
-  if (typeof window === "undefined") {
-    const { SchemaLink } = require("@apollo/client/link/schema");
-    const schema = require("../../../schema.graphql");
-    return new SchemaLink({ schema });
-  }
+  // TODO CREATE A BUILD TIME GRAPHQL SCHEMA (WITH NEXT LAMBDAS?)
+  const uri =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:5001/radiopp-acbbe/us-central1/graphql"
+      : "https://us-central1-radiopp-acbbe.cloudfunctions.net/graphql";
 
-  const { HttpLink } = require("@apollo/client/link/http");
   return new HttpLink({
-    uri:
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:5001/radiopp-acbbe/us-central1/graphql"
-        : "https://us-central1-radiopp-acbbe.cloudfunctions.net/graphql",
+    uri,
     credentials: "same-origin",
   });
 }
 
 function createApolloClient() {
   return new ApolloClient({
-    ssrMode: typeof window === "undefined",
+    ssrMode: !process.browser,
     link: createIsomorphLink(),
     cache: new InMemoryCache(),
   });

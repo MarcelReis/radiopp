@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { ApolloProvider } from "@apollo/client";
-import { useApollo } from "../api/apollo";
 import { AppPropsType } from "next/dist/next-server/lib/utils";
+
+import { useApollo } from "../api/apollo";
 
 import "../styles/main.css";
 
