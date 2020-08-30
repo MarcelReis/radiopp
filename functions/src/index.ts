@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { ApolloServer, gql } from "apollo-server-cloud-functions";
+import { QueryRadiosArgs } from "./types/graphql";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -16,11 +17,11 @@ const typeDefs = gql(schemaString);
 
 const resolvers = {
   Query: {
-    radios: async (_, variable) => {
+    radios: async (_: any, queryArgs: QueryRadiosArgs) => {
       const radiosRef = db
         .collection("radios")
-        .limit(+variable.limit)
-        .where("city", "==", variable.city);
+        .limit(+queryArgs.limit)
+        .where("city", "==", queryArgs.city);
 
       const res = await radiosRef.get();
 
@@ -28,14 +29,16 @@ const resolvers = {
         const data = snapshot.data();
 
         return {
-          id: data.id,
-          name: data.name,
-          thumb: data.thumb,
-          website: data.website,
-          streamURL: data.streamURL,
-          city: data.city,
-          state: data.state,
-          country: data.country ?? "Brasil",
+          id: data.id as number,
+          name: data.name as string,
+          originalURL: data.originalURL as string,
+          thumb: data.thumb as string,
+          website: data.website as string,
+          streamURL: data.streamURL as string,
+          city: data.city as string,
+          state: data.state as string,
+          country: data.country as string,
+          schedule: data.schedule as any,
         };
       });
     },

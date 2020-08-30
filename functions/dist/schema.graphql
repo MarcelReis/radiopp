@@ -28,5 +28,5 @@ type Radio {
 }
 
 type Query {
-  radios(city: String = "belo horizonte", limit: Int = 20): [Radio!]!
+  radios(city: String = "Belo Horizonte", limit: Int = 20): [Radio!]!
 }
