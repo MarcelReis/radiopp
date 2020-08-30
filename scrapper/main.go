@@ -13,10 +13,42 @@ import (
 	"google.golang.org/api/option"
 )
 
+// Radio ...
+type Radio struct {
+	id          int
+	name        string
+	website     string
+	thumb       string
+	city        string
+	state       string
+	country     string
+	streamURL   string
+	originalURL string
+	schedule    Schedule
+}
+
+// Schedule ...
+type Schedule struct {
+	sunday    DaySchedule
+	monday    DaySchedule
+	tuesday   DaySchedule
+	wednesday DaySchedule
+	thursday  DaySchedule
+	friday    DaySchedule
+	saturday  DaySchedule
+}
+
+// DaySchedule ...
+type DaySchedule struct {
+	time      string
+	name      string
+	presenter string
+}
+
 func main() {
 	os.Setenv("FIRESTORE_EMULATOR_HOST", "localhost:8080")
 
-	state := map[string]string{
+	stateMap := map[string]string{
 		"Acre":                "AC",
 		"Alagoas":             "AL",
 		"Amapá":               "AP",
@@ -64,17 +96,7 @@ func main() {
 		colly.DetectCharset(),
 		colly.URLFilters(regexp.MustCompile("\\/aovivo\\/"), regexp.MustCompile("\\/busca\\/")))
 
-	c.OnRequest(func(r *colly.Request) {
-		r.Ctx.Put("id", 0)
-		r.Ctx.Put("name", "")
-		r.Ctx.Put("originalURL", "")
-		r.Ctx.Put("website", "")
-		r.Ctx.Put("thumb", "")
-		r.Ctx.Put("city", "")
-		r.Ctx.Put("state", "")
-		r.Ctx.Put("country", "")
-		r.Ctx.Put("streamURL", "")
-	})
+	c.OnRequest(cleanContext)
 
 	reRadioStreamURL := regexp.MustCompile("'url':'.*'")
 
@@ -108,7 +130,7 @@ func main() {
 				e.Request.Ctx.Put("city", strings.ToLower(info[8:]))
 
 			case strings.HasPrefix(info, "Estado:"):
-				e.Request.Ctx.Put("state", state[info[8:]])
+				e.Request.Ctx.Put("state", stateMap[info[8:]])
 
 			case strings.HasPrefix(info, "Pa"):
 				e.Request.Ctx.Put("country", info[6:])
@@ -140,21 +162,33 @@ func main() {
 			return
 		}
 
-		_, err = client.Collection("radios").Doc(radioID).Set(ctx, map[string]interface{}{
-			"id":          id,
-			"name":        r.Ctx.Get("name"),
-			"website":     r.Ctx.Get("website"),
-			"thumb":       r.Ctx.Get("thumb"),
-			"city":        r.Ctx.Get("city"),
-			"state":       r.Ctx.Get("state"),
-			"country":     r.Ctx.Get("country"),
-			"streamURL":   r.Ctx.Get("streamURL"),
-			"originalURL": url,
+		_, err = client.Collection("radios").Doc(radioID).Set(ctx, Radio{
+			id:          id,
+			name:        r.Ctx.Get("name"),
+			website:     r.Ctx.Get("website"),
+			thumb:       r.Ctx.Get("thumb"),
+			city:        r.Ctx.Get("city"),
+			state:       r.Ctx.Get("state"),
+			country:     r.Ctx.Get("country"),
+			streamURL:   r.Ctx.Get("streamURL"),
+			originalURL: url,
 		})
 		if err != nil {
 			log.Printf("Error when saving the radio with id %d: %s", id, err)
 		}
 	})
 
-	c.Visit("https://www.radios.com.br/busca/?q=brasil&qfilter=completo")
+	c.Visit("http://www.radios.com.br/play/139")
+}
+
+func cleanContext(r *colly.Request) {
+	r.Ctx.Put("id", 0)
+	r.Ctx.Put("name", "")
+	r.Ctx.Put("originalURL", "")
+	r.Ctx.Put("website", "")
+	r.Ctx.Put("thumb", "")
+	r.Ctx.Put("city", "")
+	r.Ctx.Put("state", "")
+	r.Ctx.Put("country", "")
+	r.Ctx.Put("streamURL", "")
 }
