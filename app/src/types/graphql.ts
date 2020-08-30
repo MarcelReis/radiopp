@@ -37,18 +37,37 @@ export type Radio = {
   thumb: Scalars["String"];
   website: Scalars["String"];
   streamURL?: Maybe<Scalars["String"]>;
+  location?: Maybe<Location>;
+  schedule: RadioSchedule;
+};
+
+export type Location = {
+  __typename?: "Location";
   city: Scalars["String"];
+  region?: Maybe<Scalars["String"]>;
   state: Scalars["String"];
   country: Scalars["String"];
-  schedule: RadioSchedule;
 };
 
 export type Query = {
   __typename?: "Query";
-  radios: Array<Radio>;
+  radioListing: Array<Radio>;
+  radio?: Maybe<Radio>;
+  locations: Array<Location>;
 };
 
-export type QueryRadiosArgs = {
+export type QueryRadioListingArgs = {
   city?: Maybe<Scalars["String"]>;
+  limit?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryRadioArgs = {
+  name: Scalars["String"];
+};
+
+export type QueryLocationsArgs = {
+  region?: Maybe<Scalars["String"]>;
+  state?: Maybe<Scalars["String"]>;
+  country?: Maybe<Scalars["String"]>;
   limit?: Maybe<Scalars["Int"]>;
 };
