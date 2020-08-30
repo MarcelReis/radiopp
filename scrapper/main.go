@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
 	"github.com/gocolly/colly"
 	"google.golang.org/api/option"
@@ -47,6 +48,7 @@ type DaySchedule struct {
 
 func main() {
 	os.Setenv("FIRESTORE_EMULATOR_HOST", "localhost:8080")
+	saveTo := os.Args[1]
 
 	stateMap := map[string]string{
 		"Acre":                "AC",
@@ -87,14 +89,32 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	radiosRef := client.Collection("radios")
+
 	defer client.Close()
+
+	var filterRegex []*regexp.Regexp
+	var initialURL string
+	if saveTo == "production" {
+		filterRegex = []*regexp.Regexp{
+			regexp.MustCompile(`radios\.com.br\/aovivo\/`),
+			regexp.MustCompile(`radios\.com\.br\/play\/`),
+			regexp.MustCompile(`\/busca\/`)}
+		initialURL = "https://www.radios.com.br/busca/?q=brasil&qfilter=completo"
+	} else {
+		filterRegex = []*regexp.Regexp{
+			regexp.MustCompile(`radios\.com.br\/aovivo\/`),
+			regexp.MustCompile(`radios\.com\\.br\\/play\\/`),
+			regexp.MustCompile(`\/radio\/cidade\/belo-horizonte\/`)}
+		initialURL = "https://www.radios.com.br/radio/cidade/belo-horizonte/8594"
+	}
 
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.radios.com.br"),
 		colly.CacheDir("./cache"),
 		colly.IgnoreRobotsTxt(),
 		colly.DetectCharset(),
-		colly.URLFilters(regexp.MustCompile("\\/aovivo\\/"), regexp.MustCompile("\\/busca\\/")))
+		colly.URLFilters(filterRegex...))
 
 	c.OnRequest(cleanContext)
 
@@ -148,7 +168,7 @@ func main() {
 
 	c.OnScraped(func(r *colly.Response) {
 		url := r.Request.URL.EscapedPath()
-		reRadioID := regexp.MustCompile("\\d+$")
+		reRadioID := regexp.MustCompile(`\d+$`)
 		radioID := reRadioID.FindString(url)
 
 		if radioID == "" {
@@ -162,7 +182,19 @@ func main() {
 			return
 		}
 
-		_, err = client.Collection("radios").Doc(radioID).Set(ctx, Radio{
+		radioDocRef := radiosRef.Doc(radioID)
+
+		reIsPlayPage := regexp.MustCompile(`play\/d+$`)
+		if reIsPlayPage.MatchString(url) {
+			_, err = radioDocRef.Update(ctx, []firestore.Update{{Path: "streamURL", Value: r.Ctx.Get("streamURL")}})
+			if err != nil {
+				log.Printf("Error when updating the radio with id %d: %s", id, err)
+				return
+			}
+			log.Printf("Updating inner radio of: %d", id)
+		}
+
+		_, err = radioDocRef.Set(ctx, Radio{
 			id:          id,
 			name:        r.Ctx.Get("name"),
 			website:     r.Ctx.Get("website"),
@@ -178,7 +210,7 @@ func main() {
 		}
 	})
 
-	c.Visit("http://www.radios.com.br/play/139")
+	c.Visit(initialURL)
 }
 
 func cleanContext(r *colly.Request) {
