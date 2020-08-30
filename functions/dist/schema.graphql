@@ -1,0 +1,32 @@
+type RadioDailySchedule {
+  time: String!
+  name: String
+  presenter: String
+}
+
+type RadioSchedule {
+  sunday: RadioDailySchedule
+  monday: RadioDailySchedule
+  tuesday: RadioDailySchedule
+  wednesday: RadioDailySchedule
+  thursday: RadioDailySchedule
+  friday: RadioDailySchedule
+  saturday: RadioDailySchedule
+}
+
+type Radio {
+  id: Int!
+  name: String!
+  originalURL: String!
+  thumb: String!
+  website: String!
+  streamURL: String!
+  city: String!
+  state: String!
+  country: String!
+  schedule: RadioSchedule
+}
+
+type Query {
+  radios(city: String = "belo horizonte", limit: Int = 20): [Radio!]!
+}

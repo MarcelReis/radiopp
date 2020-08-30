@@ -1,36 +1,34 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
+import * as fs from "fs";
+import * as path from "path";
 
 import { ApolloServer, gql } from "apollo-server-cloud-functions";
 
 admin.initializeApp();
 const db = admin.firestore();
 
-const typeDefs = gql`
-  type Radio {
-    name: String!
-    thumb: String!
-    website: String!
-    streamURL: String!
-    city: String!
-    state: String!
-    country: String!
-  }
+const schemaString = fs
+  .readFileSync(path.join(__dirname, "./schema.graphql"), "utf-8")
+  .toString();
 
-  type Query {
-    radios: [Radio]
-  }
-`;
+const typeDefs = gql(schemaString);
 
 const resolvers = {
   Query: {
-    radios: async () => {
-      const res = await db.collection("radios").get();
+    radios: async (_, variable) => {
+      const radiosRef = db
+        .collection("radios")
+        .limit(+variable.limit)
+        .where("city", "==", variable.city);
+
+      const res = await radiosRef.get();
 
       return res.docs.map((snapshot) => {
         const data = snapshot.data();
 
         return {
+          id: data.id,
           name: data.name,
           thumb: data.thumb,
           website: data.website,
