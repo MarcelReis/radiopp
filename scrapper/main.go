@@ -16,34 +16,34 @@ import (
 
 // Radio ...
 type Radio struct {
-	id          int
-	name        string
-	website     string
-	thumb       string
-	city        string
-	state       string
-	country     string
-	streamURL   string
-	originalURL string
-	schedule    Schedule
+	ID          int      `firestore:"id"`
+	Name        string   `firestore:"name"`
+	Website     string   `firestore:"website"`
+	Thumb       string   `firestore:"thumb"`
+	City        string   `firestore:"city"`
+	State       string   `firestore:"state"`
+	Country     string   `firestore:"country"`
+	StreamURL   string   `firestore:"streamURL"`
+	OriginalURL string   `firestore:"originalURL"`
+	Schedule    Schedule `firestore:"schedule"`
 }
 
 // Schedule ...
 type Schedule struct {
-	sunday    DaySchedule
-	monday    DaySchedule
-	tuesday   DaySchedule
-	wednesday DaySchedule
-	thursday  DaySchedule
-	friday    DaySchedule
-	saturday  DaySchedule
+	Sunday    []DaySchedule `firestore:"sunday"`
+	Monday    []DaySchedule `firestore:"monday"`
+	Tuesday   []DaySchedule `firestore:"tuesday"`
+	Wednesday []DaySchedule `firestore:"wednesday"`
+	Thursday  []DaySchedule `firestore:"thursday"`
+	Friday    []DaySchedule `firestore:"friday"`
+	Saturday  []DaySchedule `firestore:"saturday"`
 }
 
 // DaySchedule ...
 type DaySchedule struct {
-	time      string
-	name      string
-	presenter string
+	Time      string `firestore:"time"`
+	Name      string `firestore:"name"`
+	Presenter string `firestore:"presenter"`
 }
 
 func main() {
@@ -104,7 +104,7 @@ func main() {
 	} else {
 		filterRegex = []*regexp.Regexp{
 			regexp.MustCompile(`radios\.com.br\/aovivo\/`),
-			regexp.MustCompile(`radios\.com\\.br\\/play\\/`),
+			regexp.MustCompile(`radios\.com\.br\/play\/`),
 			regexp.MustCompile(`\/radio\/cidade\/belo-horizonte\/`)}
 		initialURL = "https://www.radios.com.br/radio/cidade/belo-horizonte/8594"
 	}
@@ -119,6 +119,7 @@ func main() {
 	c.OnRequest(cleanContext)
 
 	reRadioStreamURL := regexp.MustCompile("'url':'.*'")
+	reRadioPlayURL := regexp.MustCompile(`https:\/\/www\.radios\.com\.br\/play\/\d+`)
 
 	c.OnHTML("script", func(e *colly.HTMLElement) {
 		streamURL := reRadioStreamURL.FindString(e.Text)
@@ -126,6 +127,12 @@ func main() {
 		if streamURL != "" {
 			streamURL = streamURL[7 : len(streamURL)-1]
 			e.Request.Ctx.Put("streamURL", streamURL)
+			return
+		}
+
+		playURL := reRadioPlayURL.FindString(e.Text)
+		if playURL != "" {
+			e.Request.Visit(playURL)
 		}
 	})
 
@@ -176,7 +183,6 @@ func main() {
 		}
 
 		id, err := strconv.Atoi(radioID)
-
 		if err != nil {
 			log.Printf("Invalid id: %s", radioID)
 			return
@@ -191,20 +197,21 @@ func main() {
 				log.Printf("Error when updating the radio with id %d: %s", id, err)
 				return
 			}
-			log.Printf("Updating inner radio of: %d", id)
 		}
 
-		_, err = radioDocRef.Set(ctx, Radio{
-			id:          id,
-			name:        r.Ctx.Get("name"),
-			website:     r.Ctx.Get("website"),
-			thumb:       r.Ctx.Get("thumb"),
-			city:        r.Ctx.Get("city"),
-			state:       r.Ctx.Get("state"),
-			country:     r.Ctx.Get("country"),
-			streamURL:   r.Ctx.Get("streamURL"),
-			originalURL: url,
-		})
+		radio := Radio{
+			ID:          id,
+			Name:        r.Ctx.Get("name"),
+			Website:     r.Ctx.Get("website"),
+			Thumb:       r.Ctx.Get("thumb"),
+			City:        r.Ctx.Get("city"),
+			State:       r.Ctx.Get("state"),
+			Country:     r.Ctx.Get("country"),
+			StreamURL:   r.Ctx.Get("streamURL"),
+			OriginalURL: url,
+		}
+
+		_, err = radioDocRef.Set(ctx, radio)
 		if err != nil {
 			log.Printf("Error when saving the radio with id %d: %s", id, err)
 		}
