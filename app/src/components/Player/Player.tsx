@@ -17,7 +17,10 @@ type PropsType = {
 };
 
 const Player = (props: PropsType): JSX.Element => {
-  const location: string = [props.radio?.city, props.radio?.state]
+  const location: string = [
+    props.radio.location.city,
+    props.radio.location.state,
+  ]
     .filter((l) => !!l)
     .join(" - ");
 

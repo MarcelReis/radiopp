@@ -29,7 +29,7 @@ const RadioList = (props: PropsType): JSX.Element => {
               />
               <span className={styles.title}>{radio.name}</span>
               <span className={styles.location}>
-                {radio.city}, {radio.state}
+                {radio.location.city}, {radio.location.state}
               </span>
             </span>
           </li>
