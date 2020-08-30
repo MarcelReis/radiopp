@@ -17,13 +17,6 @@ type PropsType = {
 };
 
 const Player = (props: PropsType): JSX.Element => {
-  const location: string = [
-    props.radio.location.city,
-    props.radio.location.state,
-  ]
-    .filter((l) => !!l)
-    .join(" - ");
-
   return (
     <div className={props.hide ? styles.containerHidden : styles.container}>
       <div className={styles.wrapper}>
@@ -51,7 +44,9 @@ const Player = (props: PropsType): JSX.Element => {
           />
           <div className={styles.radioInfo}>
             <span className={styles.radioName}>{props.radio?.name}</span>
-            <span className={styles.radioLocation}>{location}</span>
+            <span className={styles.radioLocation}>
+              {props.radio?.location.city} - {props.radio?.location.state}
+            </span>
           </div>
         </div>
 

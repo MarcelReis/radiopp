@@ -2,7 +2,7 @@
   position: fixed;
   top: var(--appbar-height);
   left: 0px;
-  z-index: 10;
+  z-index: 80;
   height: calc(100% - var(--appbar-height));
   width: 80%;
   max-width: 300px;
