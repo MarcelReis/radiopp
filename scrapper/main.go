@@ -116,7 +116,7 @@ func main() {
 		colly.DetectCharset(),
 		colly.URLFilters(filterRegex...))
 
-	c.OnRequest(cleanContext)
+	c.OnRequest(setRadioCtx)
 
 	reRadioStreamURL := regexp.MustCompile("'url':'.*'")
 	reRadioPlayURL := regexp.MustCompile(`https:\/\/www\.radios\.com\.br\/play\/\d+`)
@@ -174,56 +174,62 @@ func main() {
 	})
 
 	c.OnScraped(func(r *colly.Response) {
+		idString := r.Ctx.Get("name")
 		url := r.Request.URL.EscapedPath()
-		reRadioID := regexp.MustCompile(`\d+$`)
-		radioID := reRadioID.FindString(url)
 
-		if radioID == "" {
-			return
-		}
-
-		id, err := strconv.Atoi(radioID)
+		id, err := strconv.Atoi(idString)
 		if err != nil {
-			log.Printf("Invalid id: %s", radioID)
+			log.Printf("Invalid id: %s", idString)
 			return
 		}
 
-		radioDocRef := radiosRef.Doc(radioID)
+		radioDocRef := radiosRef.Doc(idString)
 
 		reIsPlayPage := regexp.MustCompile(`play\/d+$`)
 		if reIsPlayPage.MatchString(url) {
-			_, err = radioDocRef.Update(ctx, []firestore.Update{{Path: "streamURL", Value: r.Ctx.Get("streamURL")}})
+			update := []firestore.Update{{Path: "streamURL", Value: r.Ctx.Get("streamURL")}}
+
+			_, err = radioDocRef.Update(ctx, update)
 			if err != nil {
 				log.Printf("Error when updating the radio with id %d: %s", id, err)
 				return
 			}
 		}
 
-		radio := Radio{
-			ID:          id,
-			Name:        r.Ctx.Get("name"),
-			Website:     r.Ctx.Get("website"),
-			Thumb:       r.Ctx.Get("thumb"),
-			City:        r.Ctx.Get("city"),
-			State:       r.Ctx.Get("state"),
-			Country:     r.Ctx.Get("country"),
-			StreamURL:   r.Ctx.Get("streamURL"),
-			OriginalURL: url,
+		reIsRadioPage := regexp.MustCompile(`\/aovivo/\`)
+		if reIsRadioPage.MatchString(url) {
+			radio := Radio{
+				ID:          id,
+				Name:        r.Ctx.Get("name"),
+				Website:     r.Ctx.Get("website"),
+				Thumb:       r.Ctx.Get("thumb"),
+				City:        r.Ctx.Get("city"),
+				State:       r.Ctx.Get("state"),
+				Country:     r.Ctx.Get("country"),
+				StreamURL:   r.Ctx.Get("streamURL"),
+				OriginalURL: r.Ctx.Get("originalURL"),
+			}
+
+			_, err = radioDocRef.Set(ctx, radio)
+			if err != nil {
+				log.Printf("Error when saving the radio with id %d: %s", id, err)
+			}
 		}
 
-		_, err = radioDocRef.Set(ctx, radio)
-		if err != nil {
-			log.Printf("Error when saving the radio with id %d: %s", id, err)
-		}
 	})
 
 	c.Visit(initialURL)
 }
 
-func cleanContext(r *colly.Request) {
-	r.Ctx.Put("id", 0)
+func setRadioCtx(r *colly.Request) {
+	url := r.URL.EscapedPath()
+
+	reRadioID := regexp.MustCompile(`\d+$`)
+	radioID := reRadioID.FindString(url)
+
+	r.Ctx.Put("id", radioID)
 	r.Ctx.Put("name", "")
-	r.Ctx.Put("originalURL", "")
+	r.Ctx.Put("originalURL", r.URL.EscapedPath())
 	r.Ctx.Put("website", "")
 	r.Ctx.Put("thumb", "")
 	r.Ctx.Put("city", "")
