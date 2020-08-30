@@ -5,13 +5,13 @@ type RadioDailySchedule {
 }
 
 type RadioSchedule {
-  sunday: RadioDailySchedule
-  monday: RadioDailySchedule
-  tuesday: RadioDailySchedule
-  wednesday: RadioDailySchedule
-  thursday: RadioDailySchedule
-  friday: RadioDailySchedule
-  saturday: RadioDailySchedule
+  sun: [RadioDailySchedule!]
+  mon: [RadioDailySchedule!]
+  tue: [RadioDailySchedule!]
+  wed: [RadioDailySchedule!]
+  thu: [RadioDailySchedule!]
+  fri: [RadioDailySchedule!]
+  sat: [RadioDailySchedule!]
 }
 
 type Radio {
@@ -20,11 +20,11 @@ type Radio {
   originalURL: String!
   thumb: String!
   website: String!
-  streamURL: String!
+  streamURL: String
   city: String!
   state: String!
   country: String!
-  schedule: RadioSchedule
+  schedule: RadioSchedule!
 }
 
 type Query {
