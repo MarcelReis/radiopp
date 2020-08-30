@@ -10,9 +10,7 @@ type PropsType = {
 };
 
 const RadioContainer = (props: PropsType): JSX.Element => {
-  const onlineRadios = props.radios.filter((radio) => radio.streamURL !== "");
-
-  return <RadioList radios={onlineRadios} selectRadio={props.setRadio} />;
+  return <RadioList radios={props.radios} selectRadio={props.setRadio} />;
 };
 
 export default RadioContainer;

@@ -15,7 +15,7 @@ const RadioList = (props: PropsType): JSX.Element => {
       <h2 className={styles.title}>Radios</h2>
       <ul className={styles.list}>
         {props.radios.map((radio) => (
-          <li className={styles.item} key={radio.originalURL}>
+          <li className={styles.item} key={radio.id}>
             <span
               className={styles.link}
               onClick={() => props.selectRadio(radio)}
@@ -27,7 +27,7 @@ const RadioList = (props: PropsType): JSX.Element => {
                 src={radio.thumb}
                 alt=""
               />
-              <span className={styles.title}>{radio.name.replace("Rdio", "Rádio")}</span>
+              <span className={styles.title}>{radio.name}</span>
               <span className={styles.location}>
                 {radio.city}, {radio.state}
               </span>

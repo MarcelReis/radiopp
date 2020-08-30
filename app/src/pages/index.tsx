@@ -12,6 +12,7 @@ import { GetStaticPropsResult } from "next";
 const pageQuery = gql`
   query GetRadio {
     radios {
+      id
       name
       thumb
       city
