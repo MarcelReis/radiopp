@@ -154,13 +154,13 @@ func main() {
 
 			switch true {
 			case strings.HasPrefix(info, "Cidade:"):
-				e.Request.Ctx.Put("city", strings.ToLower(info[8:]))
+				e.Request.Ctx.Put("city", info[8:])
 
 			case strings.HasPrefix(info, "Estado:"):
 				e.Request.Ctx.Put("state", stateMap[info[8:]])
 
-			case strings.HasPrefix(info, "Pa"):
-				e.Request.Ctx.Put("country", info[6:])
+			case strings.HasPrefix(info, "País"):
+				e.Request.Ctx.Put("country", info[7:])
 
 			case strings.HasPrefix(info, "Site:"):
 				e.Request.Ctx.Put("website", info[6:])
