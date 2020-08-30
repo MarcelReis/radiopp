@@ -21,12 +21,24 @@ type Radio {
   thumb: String!
   website: String!
   streamURL: String
-  city: String!
-  state: String!
-  country: String!
+  location: Location
   schedule: RadioSchedule!
 }
 
+type Location {
+  city: String!
+  region: String
+  state: String!
+  country: String!
+}
+
 type Query {
-  radios(city: String = "Belo Horizonte", limit: Int = 20): [Radio!]!
+  radioListing(city: String = "Belo Horizonte", limit: Int = 20): [Radio!]!
+  radio(name: String!): Radio
+  locations(
+    region: String
+    state: String
+    country: String
+    limit: Int = 20
+  ): [Location!]!
 }
