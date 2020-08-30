@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"os"
 	"regexp"
@@ -30,13 +31,13 @@ type Radio struct {
 
 // Schedule ...
 type Schedule struct {
-	Sunday    []DaySchedule `firestore:"sunday"`
-	Monday    []DaySchedule `firestore:"monday"`
-	Tuesday   []DaySchedule `firestore:"tuesday"`
-	Wednesday []DaySchedule `firestore:"wednesday"`
-	Thursday  []DaySchedule `firestore:"thursday"`
-	Friday    []DaySchedule `firestore:"friday"`
-	Saturday  []DaySchedule `firestore:"saturday"`
+	Sun []DaySchedule `firestore:"sun"`
+	Mon []DaySchedule `firestore:"mon"`
+	Tue []DaySchedule `firestore:"tue"`
+	Wed []DaySchedule `firestore:"wed"`
+	Thu []DaySchedule `firestore:"thu"`
+	Fri []DaySchedule `firestore:"fri"`
+	Sat []DaySchedule `firestore:"sat"`
 }
 
 // DaySchedule ...
@@ -77,6 +78,15 @@ func main() {
 		"Tocantins":           "TO",
 		"Distrito Federal":    "DF",
 	}
+
+	scheduleSelectors := []string{
+		"#prog-Sun",
+		"#prog-Mon",
+		"#prog-Tue",
+		"#prog-Wed",
+		"#prog-Thu",
+		"#prog-Fri",
+		"#prog-Sat"}
 
 	ctx := context.Background()
 	sa := option.WithCredentialsFile("./firebase-config.json")
@@ -168,13 +178,64 @@ func main() {
 		})
 	})
 
+	c.OnHTML("#programacao .tab-content", func(e *colly.HTMLElement) {
+		schedule := Schedule{}
+
+		for index, selector := range scheduleSelectors {
+			e.ForEach(selector+" tr", func(i int, e *colly.HTMLElement) {
+				if i == 0 {
+					return
+				}
+
+				daySchedule := DaySchedule{}
+
+				e.ForEach("td", func(i int, e *colly.HTMLElement) {
+					switch i {
+					case 0:
+						daySchedule.Time = e.Text
+					case 1:
+						daySchedule.Name = e.Text
+					case 2:
+						daySchedule.Presenter = e.Text
+					}
+				})
+
+				switch index {
+				case 0:
+					schedule.Sun = append(schedule.Sun, daySchedule)
+				case 1:
+					schedule.Mon = append(schedule.Mon, daySchedule)
+				case 2:
+					schedule.Tue = append(schedule.Tue, daySchedule)
+				case 3:
+					schedule.Wed = append(schedule.Wed, daySchedule)
+				case 4:
+					schedule.Thu = append(schedule.Thu, daySchedule)
+				case 5:
+					schedule.Fri = append(schedule.Fri, daySchedule)
+				case 6:
+					schedule.Sat = append(schedule.Sat, daySchedule)
+				}
+			})
+		}
+
+		scheduleByte, err := json.Marshal(schedule)
+		if err != nil {
+			log.Printf("Error marshalling")
+			return
+		}
+
+		scheduleString := string(scheduleByte)
+		e.Request.Ctx.Put("schedule", scheduleString)
+	})
+
 	// Find and visit all links
 	c.OnHTML(".pagination-body a[href], .resultados-items a[href]", func(e *colly.HTMLElement) {
 		e.Request.Visit(e.Attr("href"))
 	})
 
 	c.OnScraped(func(r *colly.Response) {
-		idString := r.Ctx.Get("name")
+		idString := r.Ctx.Get("id")
 		url := r.Request.URL.EscapedPath()
 
 		id, err := strconv.Atoi(idString)
@@ -196,7 +257,7 @@ func main() {
 			}
 		}
 
-		reIsRadioPage := regexp.MustCompile(`\/aovivo/\`)
+		reIsRadioPage := regexp.MustCompile(`\/aovivo\/`)
 		if reIsRadioPage.MatchString(url) {
 			radio := Radio{
 				ID:          id,
@@ -206,8 +267,25 @@ func main() {
 				City:        r.Ctx.Get("city"),
 				State:       r.Ctx.Get("state"),
 				Country:     r.Ctx.Get("country"),
-				StreamURL:   r.Ctx.Get("streamURL"),
 				OriginalURL: r.Ctx.Get("originalURL"),
+			}
+
+			streamURL := r.Ctx.Get("streamURL")
+			if streamURL != "" {
+				radio.StreamURL = streamURL
+			}
+
+			scheduleStr := r.Ctx.Get("schedule")
+			if scheduleStr != "" {
+				schedule := Schedule{}
+				scheduleByt := []byte(scheduleStr)
+
+				err = json.Unmarshal(scheduleByt, &schedule)
+				if err != nil {
+					log.Printf("Error when getting schedule of the radio with id %d: %s %s", id, scheduleStr, err)
+				} else {
+					radio.Schedule = schedule
+				}
 			}
 
 			_, err = radioDocRef.Set(ctx, radio)
@@ -236,4 +314,5 @@ func setRadioCtx(r *colly.Request) {
 	r.Ctx.Put("state", "")
 	r.Ctx.Put("country", "")
 	r.Ctx.Put("streamURL", "")
+	r.Ctx.Put("schedule", "")
 }
