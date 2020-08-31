@@ -67,7 +67,6 @@ var scheduleSelectors = []string{
 	"#prog-Sat"}
 
 func main() {
-	os.Setenv("FIRESTORE_EMULATOR_HOST", "localhost:8080")
 	dev := os.Args[1] != "production"
 
 	ctx := context.Background()
@@ -294,7 +293,7 @@ func scrapeRadioPage(c *colly.Collector) {
 				e.Request.Ctx.Put("city", info[8:])
 
 			case strings.HasPrefix(info, "Região:"):
-				e.Request.Ctx.Put("region", info[8:])
+				e.Request.Ctx.Put("region", info[9:])
 
 			case strings.HasPrefix(info, "Estado:"):
 				e.Request.Ctx.Put("state", info[8:])

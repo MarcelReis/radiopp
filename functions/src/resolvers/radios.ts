@@ -10,7 +10,7 @@ export default async function radioListingResolver(
   const radiosRef = firestore.collection("radios").limit(limit);
 
   if (args.uri) {
-    radiosRef.where("city", "==", args.city);
+    radiosRef.where("uri", "==", args.uri);
   } else {
     if (args.city) {
       radiosRef.where("city", "==", args.city);
@@ -22,7 +22,7 @@ export default async function radioListingResolver(
       radiosRef.where("region", "==", args.region);
     }
     if (args.country) {
-      radiosRef.where("city", "==", args.city);
+      radiosRef.where("country", "==", args.country);
     }
   }
 
