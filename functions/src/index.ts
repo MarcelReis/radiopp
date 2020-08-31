@@ -6,7 +6,7 @@ import * as path from "path";
 import { ApolloServer, gql } from "apollo-server-cloud-functions";
 
 import radioListingResolver from "./resolvers/radioListing";
-import radioResolver from "./resolvers/radioListing";
+import radioResolver from "./resolvers/radio";
 import locationsResolver from "./resolvers/cities";
 
 admin.initializeApp();

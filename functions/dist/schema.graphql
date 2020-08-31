@@ -17,6 +17,7 @@ type RadioSchedule {
 type Radio {
   id: Int!
   name: String!
+  uri: String!
   originalURL: String!
   thumb: String!
   website: String!
@@ -34,7 +35,7 @@ type Location {
 
 type Query {
   radioListing(city: String = "Belo Horizonte", limit: Int = 20): [Radio!]!
-  radio(name: String!): Radio
+  radio(uri: String!): Radio
   locations(
     region: String
     state: String

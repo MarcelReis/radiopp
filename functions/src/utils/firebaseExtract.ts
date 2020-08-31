@@ -2,6 +2,7 @@ export function extractRadio(data: any) {
   return {
     id: data.id as number,
     name: data.name as string,
+    uri: data.uri as string,
     originalURL: data.originalURL as string,
     thumb: data.thumb as string,
     website: data.website as string,
