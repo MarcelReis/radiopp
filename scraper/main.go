@@ -23,6 +23,7 @@ type Radio struct {
 	Website     string   `firestore:"website"`
 	Thumb       string   `firestore:"thumb"`
 	City        string   `firestore:"city"`
+	Region      string   `firestore:"region"`
 	State       string   `firestore:"state"`
 	Country     string   `firestore:"country"`
 	StreamURL   string   `firestore:"streamURL"`
@@ -48,32 +49,12 @@ type DaySchedule struct {
 	Presenter string `firestore:"presenter"`
 }
 
-var stateMap = map[string]string{
-	"Acre":                "AC",
-	"Alagoas":             "AL",
-	"Amapá":               "AP",
-	"Amazonas":            "AM",
-	"Bahia":               "BA",
-	"Ceará":               "CE",
-	"Espírito Santo":      "ES",
-	"Goiás":               "GO",
-	"Maranhão":            "MA",
-	"Mato Grosso":         "MT",
-	"Minas Gerais":        "MG",
-	"Pará":                "PA",
-	"Paraná":              "PR",
-	"Pernambuco":          "PE",
-	"Piauí":               "PI",
-	"Rio de Janeiro":      "RJ",
-	"Rio Grande do Norte": "RN",
-	"Rio Grande do Sul":   "RS",
-	"Rondônia":            "RO",
-	"Roraima":             "RR",
-	"Santa Catarina":      "SC",
-	"São Paulo":           "SP",
-	"Sergipe":             "SE",
-	"Tocantins":           "TO",
-	"Distrito Federal":    "DF",
+// Location ...
+type Location struct {
+	City    string `firestore:"city"`
+	Region  string `firestore:"region"`
+	State   string `firestore:"state"`
+	Country string `firestore:"country"`
 }
 
 var scheduleSelectors = []string{
@@ -103,6 +84,9 @@ func main() {
 	defer client.Close()
 
 	radiosRef := client.Collection("radios")
+	locationsRef := client.Collection("locations")
+
+	knowLocation := make(map[string]Location)
 
 	c, initialURL := setMainCollector(dev)
 	c2 := hiddenRadioCollector()
@@ -134,9 +118,6 @@ func main() {
 				Name:        r.Ctx.Get("name"),
 				Website:     r.Ctx.Get("website"),
 				Thumb:       r.Ctx.Get("thumb"),
-				City:        r.Ctx.Get("city"),
-				State:       r.Ctx.Get("state"),
-				Country:     r.Ctx.Get("country"),
 				OriginalURL: r.Ctx.Get("originalURL"),
 			}
 
@@ -148,6 +129,26 @@ func main() {
 			streamURL := r.Ctx.Get("streamURL")
 			if streamURL != "" {
 				radio.StreamURL = streamURL
+			}
+
+			city := r.Ctx.Get("city")
+			if city != "" {
+				radio.City = city
+			}
+
+			region := r.Ctx.Get("region")
+			if region != "" {
+				radio.Region = region
+			}
+
+			state := r.Ctx.Get("state")
+			if state != "" {
+				radio.State = state
+			}
+
+			country := r.Ctx.Get("country")
+			if country != "" {
+				radio.Country = country
 			}
 
 			scheduleStr := r.Ctx.Get("schedule")
@@ -170,6 +171,10 @@ func main() {
 
 			if streamURL == "" {
 				c2.Visit("http://www.radios.com.br/play/" + strconv.Itoa(id))
+			}
+
+			if city != "" {
+				knowLocation[city] = Location{city, region, state, country}
 			}
 		}
 	})
@@ -202,6 +207,15 @@ func main() {
 	})
 
 	c.Visit(initialURL)
+
+	for city, location := range knowLocation {
+		locationDocRef := locationsRef.Doc(city)
+
+		_, err = locationDocRef.Set(ctx, location)
+		if err != nil {
+			log.Printf("Error when saving the location: %s", city)
+		}
+	}
 }
 
 func setMainCollector(dev bool) (*colly.Collector, string) {
@@ -249,6 +263,7 @@ func setMainCollectorCtx(r *colly.Request) {
 	r.Ctx.Put("website", "")
 	r.Ctx.Put("thumb", "")
 	r.Ctx.Put("city", "")
+	r.Ctx.Put("region", "")
 	r.Ctx.Put("state", "")
 	r.Ctx.Put("country", "")
 	r.Ctx.Put("streamURL", "")
@@ -278,8 +293,11 @@ func scrapeRadioPage(c *colly.Collector) {
 			case strings.HasPrefix(info, "Cidade:"):
 				e.Request.Ctx.Put("city", info[8:])
 
+			case strings.HasPrefix(info, "Região:"):
+				e.Request.Ctx.Put("region", info[8:])
+
 			case strings.HasPrefix(info, "Estado:"):
-				e.Request.Ctx.Put("state", stateMap[info[8:]])
+				e.Request.Ctx.Put("state", info[8:])
 
 			case strings.HasPrefix(info, "País"):
 				e.Request.Ctx.Put("country", info[7:])

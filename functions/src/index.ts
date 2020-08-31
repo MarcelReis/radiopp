@@ -5,9 +5,8 @@ import * as path from "path";
 
 import { ApolloServer, gql } from "apollo-server-cloud-functions";
 
-import radioListingResolver from "./resolvers/radioListing";
-import radioResolver from "./resolvers/radio";
-import locationsResolver from "./resolvers/cities";
+import radiosResolver from "./resolvers/radios";
+import locationsResolver from "./resolvers/locations";
 
 admin.initializeApp();
 
@@ -19,9 +18,8 @@ const typeDefs = gql(schemaString);
 
 const resolvers = {
   Query: {
-    radioListing: radioListingResolver,
     locations: locationsResolver,
-    radio: radioResolver,
+    radios: radiosResolver,
   },
 };
 
