@@ -68,6 +68,7 @@ var scheduleSelectors = []string{
 
 func main() {
 	dev := os.Args[1] != "production"
+	os.Setenv("FIRESTORE_EMULATOR_HOST", "localhost:8080")
 
 	ctx := context.Background()
 	sa := option.WithCredentialsFile("./firebase-config.json")
