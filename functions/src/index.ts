@@ -6,7 +6,6 @@ import * as path from "path";
 import { ApolloServer, gql } from "apollo-server-cloud-functions";
 
 import radiosResolver from "./resolvers/radios";
-import locationsResolver from "./resolvers/locations";
 
 admin.initializeApp();
 
@@ -17,10 +16,7 @@ const schemaString = fs
 const typeDefs = gql(schemaString);
 
 const resolvers = {
-  Query: {
-    locations: locationsResolver,
-    radios: radiosResolver,
-  },
+  Query: { radios: radiosResolver },
 };
 
 const apolloServer = new ApolloServer({

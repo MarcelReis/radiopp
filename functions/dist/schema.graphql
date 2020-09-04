@@ -1,17 +1,12 @@
-type RadioDailySchedule {
-  time: String!
-  name: String
-  presenter: String
-}
-
-type RadioSchedule {
-  sun: [RadioDailySchedule!]
-  mon: [RadioDailySchedule!]
-  tue: [RadioDailySchedule!]
-  wed: [RadioDailySchedule!]
-  thu: [RadioDailySchedule!]
-  fri: [RadioDailySchedule!]
-  sat: [RadioDailySchedule!]
+type Query {
+  radios(
+    city: String
+    region: String
+    state: String
+    country: String
+    limit: Int = 20
+    uri: String
+  ): [Radio!]!
 }
 
 type Radio {
@@ -33,20 +28,18 @@ type Location {
   country: String!
 }
 
-type Query {
-  radios(
-    city: String
-    region: String
-    state: String
-    country: String
-    limit: Int = 20
-    uri: String
-  ): [Radio!]!
+type RadioSchedule {
+  sun: [RadioDailySchedule!]
+  mon: [RadioDailySchedule!]
+  tue: [RadioDailySchedule!]
+  wed: [RadioDailySchedule!]
+  thu: [RadioDailySchedule!]
+  fri: [RadioDailySchedule!]
+  sat: [RadioDailySchedule!]
+}
 
-  locations(
-    city: String
-    region: String
-    state: String
-    country: String
-  ): [Location!]!
+type RadioDailySchedule {
+  time: String!
+  name: String
+  presenter: String
 }
