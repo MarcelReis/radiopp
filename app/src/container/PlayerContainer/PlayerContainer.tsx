@@ -6,7 +6,9 @@ import { Radio } from "src/types/graphql";
 import Player from "../../components/Player";
 
 const PROXY_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:1234";
+  process.env.NODE_ENV === "production"
+    ? "http://howler.marcelreis.dev"
+    : "http://localhost:1234";
 
 type PropsType = {
   radio: Radio | null;
@@ -34,7 +36,7 @@ const PlayerContainer = (props: PropsType): JSX.Element => {
 
   const radioURL = props.radio?.streamURL;
   useEffect(() => {
-    const iframeURL = new URL("http://localhost:1234");
+    const iframeURL = new URL(PROXY_URL);
     if (radioURL) {
       iframeURL.searchParams.append("streamURL", radioURL);
     }
