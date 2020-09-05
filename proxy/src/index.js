@@ -13,8 +13,16 @@ const sound = new Howl({
 });
 
 const SOUND_ID = sound.play();
+const SEEK_INTERVAL = 250;
 
-sound.once("load", () => sound.play(SOUND_ID));
+sound.once("load", () => {
+  sound.play(SOUND_ID);
+  setInterval(() => {
+    const time = sound.seek(SOUND_ID);
+
+    window.parent.postMessage({ name: "info", time }, "*");
+  }, SEEK_INTERVAL);
+});
 
 const HOWLER_EVENTS = [
   "play",
@@ -43,7 +51,7 @@ document.getElementById("player").addEventListener("click", () => {
 });
 
 window.addEventListener("message", ({ data }) => {
-  switch (data) {
+  switch (data.name) {
     case "play":
       sound.play(SOUND_ID);
       break;

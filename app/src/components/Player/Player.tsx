@@ -8,8 +8,9 @@ import { Radio } from "src/types/graphql";
 type PropsType = {
   initialized: boolean;
   hide: boolean;
-  playing: boolean;
   loading: boolean;
+  playing: boolean;
+  buffering: boolean;
   radio: Radio | null;
   children: React.ReactNode;
 
@@ -34,9 +35,21 @@ const Player = (props: PropsType): JSX.Element => {
           {props.initialized && (
             <Button
               color="accent-1"
-              onClick={props.playing ? props.pause : props.play}
+              onClick={
+                props.loading || props.buffering
+                  ? null
+                  : props.playing
+                  ? props.pause
+                  : props.play
+              }
               icon={
-                props.playing ? <Pause size={24} /> : <PlayArrow size={24} />
+                props.loading || props.buffering ? (
+                  <S.RotatingRadar size={24} />
+                ) : props.playing ? (
+                  <Pause size={24} />
+                ) : (
+                  <PlayArrow size={24} />
+                )
               }
             />
           )}

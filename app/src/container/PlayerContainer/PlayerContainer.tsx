@@ -13,17 +13,23 @@ type PropsType = {
 };
 type StateType = {
   iframeSrc: string | null;
+
   initialized: boolean;
   loading: boolean;
+  buffering: boolean;
   playing: boolean;
+  time: null | number;
 };
 const PlayerContainer = (props: PropsType): JSX.Element => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [state, setState] = useState<StateType>({
     iframeSrc: null,
+
     initialized: false,
     loading: false,
+    buffering: false,
     playing: false,
+    time: null,
   });
 
   const radioURL = props.radio?.streamURL;
@@ -40,7 +46,6 @@ const PlayerContainer = (props: PropsType): JSX.Element => {
       if (event.origin !== PROXY_URL) {
         return;
       }
-      console.log("player", event);
 
       switch (event.data.name) {
         case "init":
@@ -51,12 +56,22 @@ const PlayerContainer = (props: PropsType): JSX.Element => {
           setState((state) => ({ ...state, initialized: true }));
           break;
 
+        case "info":
+          setState((state) => {
+            const time = event.data.time;
+            const buffering =
+              state.playing && state.time === event.data.time ? true : false;
+
+            return { ...state, time, buffering };
+          });
+          break;
+
         case "load":
           setState((state) => ({ ...state, loading: false }));
           break;
 
         case "play":
-          setState((state) => ({ ...state, playing: true }));
+          setState((state) => ({ ...state, playing: true, loading: false }));
           break;
 
         case "pause":
@@ -64,6 +79,7 @@ const PlayerContainer = (props: PropsType): JSX.Element => {
           break;
 
         default:
+          console.error("UNHANDLED MESSAGE", event);
           break;
       }
     };
@@ -73,43 +89,39 @@ const PlayerContainer = (props: PropsType): JSX.Element => {
     return () => window.removeEventListener("message", messageHandler);
   }, []);
 
-  const play = () => {
-    iframeRef.current.contentWindow.postMessage("play", "*");
-  };
+  const play = () =>
+    iframeRef.current.contentWindow.postMessage({ name: "play" }, "*");
 
-  const pause = () => {
-    iframeRef.current.contentWindow.postMessage("pause", "*");
-  };
+  const pause = () =>
+    iframeRef.current.contentWindow.postMessage({ name: "pause" }, "*");
 
-  const stop = () => {
-    iframeRef.current.contentWindow.postMessage("stop", "*");
-  };
+  const stop = () =>
+    iframeRef.current.contentWindow.postMessage({ name: "stop" }, "*");
 
   return (
-    <>
-      <Player
-        hide={!radioURL}
-        initialized={state.initialized}
-        playing={state.playing}
-        loading={state.loading}
-        radio={props.radio}
-        play={play}
-        pause={pause}
-        stop={stop}
-      >
-        {radioURL && (
-          <iframe
-            ref={iframeRef}
-            src={state.iframeSrc}
-            name="player"
-            width="48px"
-            height="48px"
-            frameBorder="none"
-            style={state.initialized ? { display: "none" } : {}}
-          />
-        )}
-      </Player>
-    </>
+    <Player
+      hide={!radioURL}
+      initialized={state.initialized}
+      playing={state.playing}
+      buffering={state.buffering}
+      loading={state.loading}
+      radio={props.radio}
+      play={play}
+      pause={pause}
+      stop={stop}
+    >
+      {radioURL && (
+        <iframe
+          ref={iframeRef}
+          src={state.iframeSrc}
+          name="player"
+          width="48px"
+          height="48px"
+          frameBorder="none"
+          style={state.initialized ? { display: "none" } : {}}
+        />
+      )}
+    </Player>
   );
 };
 
