@@ -3,7 +3,7 @@ import { Howl } from "howler";
 const url = new URL(window.location.href);
 const streamURL = url.searchParams.get("streamURL");
 
-window.parent.postMessage("init", "*");
+window.parent.postMessage({ name: "init" }, "*");
 
 const sound = new Howl({
   src: [streamURL],
@@ -12,51 +12,52 @@ const sound = new Howl({
   autoplay: true,
 });
 
-const RADIO_ID = sound.play();
+const SOUND_ID = sound.play();
 
-sound.once("load", () => sound.play(RADIO_ID));
+sound.once("load", () => sound.play(SOUND_ID));
 
-sound.on("play", () => {
-  window.parent.postMessage("play", "*");
-});
+const HOWLER_EVENTS = [
+  "play",
+  "end",
+  "pause",
+  "stop",
+  "mute",
+  "volume",
+  "rate",
+  "seek",
+  "fade",
+  "unlock",
+  "loaderror",
+  "playerror",
+];
 
-sound.on("pause", () => {
-  window.parent.postMessage("pause", "*");
-});
-
-sound.on("load", () => {
-  window.parent.postMessage("load", "*");
-});
-
-sound.on("loaderror", () => {
-  window.parent.postMessage("loaderror", "*");
-});
-
-sound.on("stop", () => {
-  window.parent.postMessage("stop", "*");
-});
+HOWLER_EVENTS.forEach((eventName) =>
+  sound.on(eventName, (soundID, error) =>
+    window.parent.postMessage({ name: eventName, soundID, error }, "*")
+  )
+);
 
 document.getElementById("player").addEventListener("click", () => {
-  sound.play(RADIO_ID);
-  window.parent.postMessage("interaction", "*");
+  sound.play(SOUND_ID);
+  window.parent.postMessage({ name: "interaction" }, "*");
 });
 
 window.addEventListener("message", ({ data }) => {
-  console.log("data", data);
   switch (data) {
     case "play":
-      sound.play(RADIO_ID);
+      sound.play(SOUND_ID);
       break;
 
     case "pause":
-      sound.pause(RADIO_ID);
+      sound.pause(SOUND_ID);
       break;
 
     case "stop":
-      sound.stop(RADIO_ID);
+      sound.stop(SOUND_ID);
       break;
 
     default:
+      console.error("UNHANDLED MESSAGE", data);
       break;
   }
 });

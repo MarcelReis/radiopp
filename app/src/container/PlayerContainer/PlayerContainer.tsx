@@ -42,7 +42,7 @@ const PlayerContainer = (props: PropsType): JSX.Element => {
       }
       console.log("player", event);
 
-      switch (event.data) {
+      switch (event.data.name) {
         case "init":
           setState((state) => ({ ...state, loading: true, playing: null }));
           break;

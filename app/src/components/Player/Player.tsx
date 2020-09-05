@@ -47,7 +47,7 @@ const Player = (props: PropsType): JSX.Element => {
               src={props.radio?.thumb}
               height="36px"
               width="36px"
-              style={{ borderRadius: "xsmall" }}
+              style={{ borderRadius: "4px" }}
               margin={{ left: "xsmall" }}
             />
 
