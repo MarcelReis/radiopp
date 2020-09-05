@@ -1,9 +1,8 @@
 import React from "react";
+import { Box, Button, Image, Text } from "grommet";
+import { PlayArrow, Pause, Close } from "@styled-icons/material/";
 
-import { MdPlayArrow, MdPause, MdPlaylistPlay } from "react-icons/md";
-import { GiRadarSweep } from "react-icons/gi";
-
-import styles from "./Player.module.css";
+import * as S from "./Player.styled";
 import { Radio } from "src/types/graphql";
 
 type PropsType = {
@@ -14,56 +13,55 @@ type PropsType = {
 
   play: () => void;
   pause: () => void;
+  stop: () => void;
 };
 
 const Player = (props: PropsType): JSX.Element => {
   return (
-    <div className={props.hide ? styles.containerHidden : styles.container}>
-      <div className={styles.wrapper}>
-        {props.loading ? (
-          <button className={styles.spinnerButton}>
-            <GiRadarSweep />
-          </button>
-        ) : !props.playing ? (
-          <button className={styles.playButton} onClick={props.play}>
-            <MdPlayArrow />
-          </button>
-        ) : (
-          <button className={styles.playButton} onClick={props.pause}>
-            <MdPause />
-          </button>
-        )}
-
-        <div className={styles.radioData}>
-          <img
-            className={styles.radioThumb}
-            src={props.radio?.thumb}
-            width={36}
-            height={36}
-            alt=""
+    <S.Container active={!props.hide}>
+      <Box
+        direction="row"
+        background="dark-1"
+        height="100%"
+        pad={{ horizontal: "xxsmall" }}
+        align="center"
+        justify="between"
+      >
+        <Box flex direction="row" margin="auto" width={{ max: "800px" }}>
+          <Button
+            color="accent-1"
+            onClick={props.playing ? props.pause : props.play}
+            icon={props.playing ? <Pause size={24} /> : <PlayArrow size={24} />}
           />
-          <div className={styles.radioInfo}>
-            <span className={styles.radioName}>{props.radio?.name}</span>
-            <span className={styles.radioLocation}>
-              {props.radio?.location.city} - {props.radio?.location.state}
-            </span>
-          </div>
-        </div>
 
-        <div className={styles.detection}>
-          <span onClick={() => alert("Em desenvolvimento")}>
-            Identificando...
-          </span>
-        </div>
+          <Box direction="row" flex="grow" align="center" justify="start">
+            <Image
+              alt=""
+              src={props.radio?.thumb}
+              height="36px"
+              width="36px"
+              style={{ borderRadius: "xsmall" }}
+              margin={{ left: "xsmall" }}
+            />
 
-        <button
-          className={styles.playlistButton}
-          onClick={() => alert("Em desenvolvimento")}
-        >
-          <MdPlaylistPlay />
-        </button>
-      </div>
-    </div>
+            <Box pad="xsmall" margin={{ left: "small" }}>
+              <Text weight="bold" size="small">
+                {props.radio?.name}
+              </Text>
+              <Text size="small" color="dark-5">
+                {props.radio?.location.city}
+              </Text>
+            </Box>
+          </Box>
+
+          <Button
+            onClick={props.stop}
+            color="accent-1"
+            icon={<Close size={24} />}
+          />
+        </Box>
+      </Box>
+    </S.Container>
   );
 };
 

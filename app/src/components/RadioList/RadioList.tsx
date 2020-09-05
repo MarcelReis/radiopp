@@ -1,8 +1,18 @@
 import React from "react";
 
-import { Radio } from "src/types/graphql";
+import {
+  grommet,
+  Box,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Image,
+  Grid,
+  Text,
+} from "grommet";
 
-import styles from "./RadioList.module.css";
+import { Radio } from "src/types/graphql";
 
 type PropsType = {
   radios: Radio[];
@@ -11,31 +21,40 @@ type PropsType = {
 
 const RadioList = (props: PropsType): JSX.Element => {
   return (
-    <>
-      <h2 className={styles.title}>Radios</h2>
-      <ul className={styles.list}>
+    <section>
+      <Text as="h2">Radios</Text>
+
+      <Grid
+        as="ul"
+        columns={{ count: "fill", size: "300px" }}
+        gap="small"
+        style={{ padding: 0 }}
+      >
         {props.radios.map((radio) => (
-          <li className={styles.item} key={radio.id}>
-            <span
-              className={styles.link}
-              onClick={() => props.selectRadio(radio)}
-            >
-              <img
-                className={styles.logo}
-                width={50}
-                height={50}
-                src={radio.thumb}
-                alt=""
-              />
-              <span className={styles.title}>{radio.name}</span>
-              <span className={styles.location}>
+          <Card
+            as="li"
+            pad="small"
+            gap="medium"
+            key={radio.id}
+            onClick={() => props.selectRadio(radio)}
+            direction="row"
+          >
+            <Image
+              src={radio.thumb}
+              height="64px"
+              width="64px"
+              style={{ borderRadius: "8px" }}
+            />
+            <CardBody justify="around">
+              <Text weight="bold">{radio.name}</Text>
+              <Text size="small" color="dark-2">
                 {radio.location.city}, {radio.location.state}
-              </span>
-            </span>
-          </li>
+              </Text>
+            </CardBody>
+          </Card>
         ))}
-      </ul>
-    </>
+      </Grid>
+    </section>
   );
 };
 
