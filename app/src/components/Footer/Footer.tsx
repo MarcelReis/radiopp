@@ -1,15 +1,19 @@
 import React from "react";
+import { Footer, Text } from "grommet";
 
-import styles from "./Footer.module.css";
+import * as S from "./Footer.styled";
 
-const Footer = (): JSX.Element => {
+const AppFooter = (): JSX.Element => {
   return (
-    <footer className={styles.container}>
-      <p className={styles.copyRight}>
-        © Copyright {new Date().getFullYear()}, Marcelo Reis
-      </p>
-    </footer>
+    <S.Container>
+      <Footer as="div" background="light-4" justify="center" pad="small">
+        <Text textAlign="center" size="small">
+          © {new Date().getFullYear()} Copyright{" "}
+          <a href="https://marcelreis.dev">Marcelo Reis</a>
+        </Text>
+      </Footer>
+    </S.Container>
   );
 };
 
-export default Footer;
+export default AppFooter;

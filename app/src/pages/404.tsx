@@ -9,9 +9,7 @@ const NotFoundPage = (): React.ReactNode => {
         <title>Radiopp - Página não encontrada</title>
       </Head>
 
-      <Layout>
-        <h1>404 - Página não encontrada</h1>
-      </Layout>
+      <h1>404 - Página não encontrada</h1>
     </div>
   );
 };

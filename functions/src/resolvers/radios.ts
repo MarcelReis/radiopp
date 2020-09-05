@@ -1,10 +1,6 @@
 import { extractRadio } from "../utils/firebaseExtract";
 
-export default async function radioListingResolver(
-  parent: any,
-  args,
-  { firestore }
-) {
+export default async function radiosResolver(parent: any, args, { firestore }) {
   const limit = args.limit > 50 ? 50 : args.limit;
 
   let radiosRef = firestore.collection("radios").limit(limit);

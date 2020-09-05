@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { grommet, Grommet } from "grommet";
 import dynamic from "next/dynamic";
 import { ApolloProvider } from "@apollo/client";
 import { AppPropsType } from "next/dist/next-server/lib/utils";
@@ -11,9 +12,10 @@ const MenuContainer = dynamic(() => import("../container/MenuContainer"), {
   ssr: false,
 });
 
-import Footer from "src/components/Footer";
 import AppBar from "src/components/AppBar";
+import Footer from "src/components/Footer";
 import Head from "next/head";
+import Layout from "src/components/Layout";
 
 function MyApp({ Component, pageProps }: AppPropsType): JSX.Element {
   const [state, setState] = useState({ menuOpen: false });
@@ -23,23 +25,25 @@ function MyApp({ Component, pageProps }: AppPropsType): JSX.Element {
     setState((state) => ({ ...state, menuOpen: !state.menuOpen }));
 
   return (
-    <>
-      <Head>
-        <title>Radiopp - As melhores Rádios online</title>
-        <meta
-          name="description"
-          content="As melhores rádios do Brasil, escute as rádios da sua cidade e do mundo online"
-        />
-      </Head>
-      <ApolloProvider client={apolloClient as any}>
-        <AppBar toggleMenu={toggleMenu} menuOpen={state.menuOpen} />
-        <Component {...pageProps} />
-        <Footer />
+    <ApolloProvider client={apolloClient}>
+      <Grommet theme={grommet}>
+        <Head>
+          <title>Radiopp - As melhores Rádios online</title>
+          <meta
+            name="description"
+            content="As melhores rádios do Brasil, escute as rádios da sua cidade e do mundo online"
+          />
+        </Head>
+        <AppBar />
 
-        {/* Modals */}
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+
+        <Footer />
         <MenuContainer isOpen={state.menuOpen} toggleMenu={toggleMenu} />
-      </ApolloProvider>
-    </>
+      </Grommet>
+    </ApolloProvider>
   );
 }
 

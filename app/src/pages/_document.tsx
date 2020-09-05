@@ -6,12 +6,19 @@ import Document, {
   NextScript,
   DocumentContext,
 } from "next/document";
+import { ServerStyleSheet } from "styled-components";
 
-class MyDocument extends Document {
+class MyDocument extends Document<{ styleTags: any }> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async getInitialProps(ctx: DocumentContext): Promise<any> {
     const initialProps = await Document.getInitialProps(ctx);
-    return { ...initialProps };
+    const sheet = new ServerStyleSheet();
+
+    ctx.renderPage((App) => (props) => sheet.collectStyles(<App {...props} />));
+
+    const styleTags = sheet.getStyleElement();
+
+    return { ...initialProps, styleTags };
   }
 
   render(): JSX.Element {
@@ -91,6 +98,7 @@ class MyDocument extends Document {
           <meta name="msapplication-TileColor" content="#ffffff" />
           <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
           <meta name="theme-color" content="#ffffff" />
+          {this.props.styleTags}
         </Head>
         <body>
           <Main />

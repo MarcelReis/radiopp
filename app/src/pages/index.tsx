@@ -11,7 +11,7 @@ import { GetStaticPropsResult } from "next";
 
 const pageQuery = gql`
   query GetRadio {
-    radioListing {
+    radios {
       id
       name
       thumb
@@ -29,14 +29,14 @@ function HomePage(): JSX.Element {
   const [radio, setRadio] = useState<null | Radio>(null);
 
   const {
-    data: { radioListing },
+    data: { radios },
   } = useQuery<Query>(pageQuery);
 
   return (
-    <Layout>
-      <RadioContainer radios={radioListing} setRadio={setRadio} />
+    <>
+      <RadioContainer radios={radios} setRadio={setRadio} />
       <PlayerContainer radio={radio} />
-    </Layout>
+    </>
   );
 }
 

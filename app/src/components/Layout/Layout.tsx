@@ -1,9 +1,21 @@
 import React from "react";
+import { Box } from "grommet";
 
-import styles from "./Layout.module.css";
+type PropsType = {
+  children: React.ReactNode[];
+};
 
-const Layout = ({ children }: { children: React.ReactNode }): JSX.Element => {
-  return <div className={styles.container}>{children}</div>;
+const Layout = (props: PropsType): JSX.Element => {
+  return (
+    <Box
+      pad={{ top: "56px", horizontal: "medium", bottom: "44px" }}
+      margin="auto"
+      width={{ max: "800px" }}
+      height={{ min: "100%" }}
+    >
+      {props.children}
+    </Box>
+  );
 };
 
 export default Layout;
