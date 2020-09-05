@@ -97,15 +97,17 @@ const PlayerContainer = (props: PropsType): JSX.Element => {
         pause={pause}
         stop={stop}
       >
-        <iframe
-          ref={iframeRef}
-          src={state.iframeSrc}
-          name="player"
-          width="48px"
-          height="48px"
-          frameBorder="none"
-          style={state.initialized ? { display: "none" } : {}}
-        />
+        {radioURL && (
+          <iframe
+            ref={iframeRef}
+            src={state.iframeSrc}
+            name="player"
+            width="48px"
+            height="48px"
+            frameBorder="none"
+            style={state.initialized ? { display: "none" } : {}}
+          />
+        )}
       </Player>
     </>
   );
