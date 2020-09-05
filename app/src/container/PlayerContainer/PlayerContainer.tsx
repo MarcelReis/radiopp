@@ -1,85 +1,113 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useState, useRef } from "react";
 
 import { Radio } from "src/types/graphql";
 
-import { Howl } from "howler";
 import Player from "../../components/Player";
+
+const PROXY_URL =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:1234";
 
 type PropsType = {
   radio: Radio | null;
 };
 type StateType = {
-  player: null | Howl;
+  iframeSrc: string | null;
+  initialized: boolean;
   loading: boolean;
   playing: boolean;
 };
 const PlayerContainer = (props: PropsType): JSX.Element => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [state, setState] = useState<StateType>({
-    player: null,
+    iframeSrc: null,
+    initialized: false,
     loading: false,
     playing: false,
   });
 
   const radioURL = props.radio?.streamURL;
   useEffect(() => {
-    setState((state) => {
-      if (state.loading) {
-        return { ...state };
-      }
-      if (state.player) {
-        state.player.unload();
-      }
-      if (!radioURL) {
-        return { ...state, player: null };
-      }
-
-      const newPlayer = new Howl({
-        src: [radioURL],
-        html5: true,
-        format: ["acc", "mp3"],
-      });
-
-      newPlayer.once("load", () => {
-        setState((state) => ({ ...state, loading: false }));
-      });
-
-      newPlayer.once("loaderror", () => {
-        setState((state) => ({ ...state, loading: false }));
-        alert("Erro ao carregar a radio");
-      });
-
-      newPlayer.on("play", () =>
-        setState((state) => ({ ...state, playing: true }))
-      );
-      newPlayer.on("pause", () =>
-        setState((state) => ({ ...state, playing: false }))
-      );
-
-      newPlayer.play();
-
-      return { ...state, loading: true, player: newPlayer };
-    });
+    const iframeURL = new URL("http://localhost:1234");
+    if (radioURL) {
+      iframeURL.searchParams.append("streamURL", radioURL);
+    }
+    setState((state) => ({ ...state, iframeSrc: iframeURL.href }));
   }, [radioURL]);
 
   useEffect(() => {
-    return () => {
-      state.player?.unload();
+    const messageHandler = (event: MessageEvent) => {
+      if (event.origin !== PROXY_URL) {
+        return;
+      }
+      console.log("player", event);
+
+      switch (event.data) {
+        case "init":
+          setState((state) => ({ ...state, loading: true, playing: null }));
+          break;
+
+        case "interaction":
+          setState((state) => ({ ...state, initialized: true }));
+          break;
+
+        case "load":
+          setState((state) => ({ ...state, loading: false }));
+          break;
+
+        case "play":
+          setState((state) => ({ ...state, playing: true }));
+          break;
+
+        case "pause":
+          setState((state) => ({ ...state, playing: false }));
+          break;
+
+        default:
+          break;
+      }
     };
-  }, [state.player]);
 
-  const play = () => state.player?.play();
+    window.addEventListener("message", messageHandler);
 
-  const pause = () => state.player?.pause();
+    return () => window.removeEventListener("message", messageHandler);
+  }, []);
+
+  const play = () => {
+    iframeRef.current.contentWindow.postMessage("play", "*");
+  };
+
+  const pause = () => {
+    iframeRef.current.contentWindow.postMessage("pause", "*");
+  };
+
+  const stop = () => {
+    iframeRef.current.contentWindow.postMessage("stop", "*");
+  };
 
   return (
-    <Player
-      hide={state.player === null}
-      playing={state.playing}
-      loading={state.loading}
-      radio={props.radio}
-      play={play}
-      pause={pause}
-    />
+    <>
+      <Player
+        hide={!radioURL}
+        initialized={state.initialized}
+        playing={state.playing}
+        loading={state.loading}
+        radio={props.radio}
+        play={play}
+        pause={pause}
+        stop={stop}
+      >
+        <iframe
+          ref={iframeRef}
+          src={state.iframeSrc}
+          name="player"
+          width="48px"
+          height="48px"
+          frameBorder="none"
+          style={state.initialized ? { display: "none" } : {}}
+        />
+      </Player>
+    </>
   );
 };
 

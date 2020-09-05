@@ -6,10 +6,12 @@ import * as S from "./Player.styled";
 import { Radio } from "src/types/graphql";
 
 type PropsType = {
+  initialized: boolean;
   hide: boolean;
   playing: boolean;
   loading: boolean;
   radio: Radio | null;
+  children: React.ReactNode;
 
   play: () => void;
   pause: () => void;
@@ -28,11 +30,16 @@ const Player = (props: PropsType): JSX.Element => {
         justify="between"
       >
         <Box flex direction="row" margin="auto" width={{ max: "800px" }}>
-          <Button
-            color="accent-1"
-            onClick={props.playing ? props.pause : props.play}
-            icon={props.playing ? <Pause size={24} /> : <PlayArrow size={24} />}
-          />
+          {props.children}
+          {props.initialized && (
+            <Button
+              color="accent-1"
+              onClick={props.playing ? props.pause : props.play}
+              icon={
+                props.playing ? <Pause size={24} /> : <PlayArrow size={24} />
+              }
+            />
+          )}
 
           <Box direction="row" flex="grow" align="center" justify="start">
             <Image

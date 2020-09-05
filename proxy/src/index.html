@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlayerFrame</title>
+    <style>
+      #player {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        border: none;
+        padding: 0px;
+        font-size: 0px;
+        background-color: transparent;
+      }
+      #player > i {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        display: block;
+        box-sizing: border-box;
+        width: 14px;
+        height: 14px;
+        border-style: solid;
+        border-color: transparent transparent transparent #6fffb0;
+        border-width: 7px 0px 7px 14px;
+      }
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="player"><i></i>Play</button>
+  </body>
+</html>
