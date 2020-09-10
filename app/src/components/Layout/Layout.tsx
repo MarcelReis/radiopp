@@ -2,7 +2,7 @@ import React from "react";
 import { Box } from "grommet";
 
 type PropsType = {
-  children: React.ReactNode[];
+  children: React.ReactNode;
 };
 
 const Layout = (props: PropsType): JSX.Element => {

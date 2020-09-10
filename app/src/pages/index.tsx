@@ -6,12 +6,11 @@ import PlayerContainer from "../container/PlayerContainer";
 
 import { initializeApollo } from "src/api/apollo";
 import { Radio, Query } from "src/types/graphql";
-import Layout from "src/components/Layout";
 import { GetStaticPropsResult } from "next";
 
 const pageQuery = gql`
   query GetRadio {
-    radios {
+    radios(limit: 50, city: "Belo Horizonte") {
       id
       name
       thumb

@@ -7,7 +7,7 @@ import Player from "../../components/Player";
 
 const PROXY_URL =
   process.env.NODE_ENV === "production"
-    ? "http://howler.marcelreis.dev"
+    ? "https://howler.marcelreis.dev"
     : "http://localhost:1234";
 
 type PropsType = {
